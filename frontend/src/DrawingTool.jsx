@@ -71,7 +71,8 @@ export default function DrawingTool() {
     const imageBase64 = canvas.toDataURL("image/png");
   
     try {
-      const response = await fetch("https://your-api-endpoint.com/predict", {
+      // const response = await fetch("https://your-api-endpoint.com/predict", {
+      const response = await fetch("http://localhost:7001/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -120,8 +121,8 @@ export default function DrawingTool() {
       >
         <canvas
           ref={canvasRef}
-          width={window.innerWidth * 0.7}
-          height={500}
+          width={window.innerHeight * 0.7}
+          height={window.innerHeight * 0.7}
           style={{
             border: "5px solid black",
             background: "white",
