@@ -5,6 +5,7 @@ import numpy as np
 import base64
 import io
 from PIL import Image
+from joblib import dump, load
 
 app = Flask(__name__)
 CORS(app)
