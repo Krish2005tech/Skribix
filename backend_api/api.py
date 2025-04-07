@@ -56,10 +56,12 @@ def base64_to_image(base64_str,size=256):
     Returns:
     - img (PIL.Image): Decoded image.
     """
-    base64_data = base64_str.split(",")[1]
-    image_bytes = base64.b64decode(base64_data)
+    image_bytes = base64.b64decode(base64_str)
     img = Image.open(io.BytesIO(image_bytes))
-
+    # Display the image using OpenCV (for debugging purposes)
+    # cv2.imshow("Decoded Image", np.array(img))
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     img = np.array(img.convert('L'))  # Convert to grayscale
     img_resized = cv2.resize(img, (size, size))
     return img_resized.astype(np.float32)
@@ -163,7 +165,7 @@ vocab_path = "..\\skribix_v2\\feature extraction\\vocabulary.npy"
 
 vocabulary = np.load(vocab_path)
 
-knn_model_path = "..\\skribix_v2\\knn_model\\knn_model.joblib"
+knn_model_path = "..\\skribix_v2\\knn model\\knn_model.joblib"
 # Load the Knn model
 knn_model = joblib.load(knn_model_path)
 
@@ -195,11 +197,16 @@ def predict():
 
         # return jsonify({'predictions': results})
         prediction = knn_model.predict([feature_vector])
+        print(prediction)
 
-        return jsonify({'prediction': prediction})
+        # return jsonify({'prediction': prediction.tolist()})
+        return jsonify({'prediction': int(prediction[0])})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=7001)
+
+#to run : 
+#py .\api.py
