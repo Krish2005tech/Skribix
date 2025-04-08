@@ -29,7 +29,7 @@ from PIL import Image
 
 
 
-
+final_labels={0: 'airplane', 1: 'book', 2: 'cup', 3: 'envelope', 4: 'fan', 5: 'fork', 6: 'hat', 7: 'key', 8: 'laptop', 9: 'leaf', 10: 'moon', 11: 'pizza', 12: 't-shirt', 13: 'traffic light', 14: 'wineglass'}
 app = Flask(__name__)
 CORS(app)
 
@@ -44,7 +44,63 @@ CORS(app)
 
 # ----------------------------
 # Step 1: Image Preprocessing and Local Descriptor Extraction
+
+ann_model_path = "..\\skribix_v2\\ann model\\best_ann_model_4.h5"
+
 # ----------------------------
+# Preprocessing Function
+# ----------------------------
+
+def preprocess_image_fn(img):
+    """
+    Preprocess an input image:
+      - Resize to 128x128 using bilinear interpolation,
+      - Convert to grayscale (if needed),
+      - Invert the image (i.e. subtract from 255),
+      - Rescale pixel values to [0, 1].
+    (Assumes the input image is loaded as RGB or grayscale.)
+    """
+    # If image has 3 channels, convert to grayscale.
+    if len(img.shape) == 3 and img.shape[-1] == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    # Resize to 128x128
+    img_resized = cv2.resize(img, (128, 128), interpolation=cv2.INTER_LINEAR)
+    # Invert the image so background becomes white (i.e., pixel value 1)
+    img_inverted = 255 - img_resized
+    # Normalize pixel values to [0,1]
+    img_norm = img_inverted.astype("float32") / 255.0
+    # Expand dims to make shape (128,128,1)
+    img_norm = np.expand_dims(img_norm, axis=-1)
+    return img_norm
+
+# Custom preprocessing function for ImageDataGenerator
+def preprocessing_function(img):
+    # Input img is a NumPy array with shape (H, W, C) in [0,255]
+    return preprocess_image_fn(img)
+
+# ----------------------------
+
+# ----------------------------
+# Test Image Prediction
+# ----------------------------
+
+def predict_single_image(image, model, debug=True):
+    """
+    Load and preprocess a single test image, predict its label using the trained model,
+    and display debugging information.
+    """
+    # Load image and preprocess
+    # img = preprocess_image_fn(cv2.imread(image_path, cv2.IMREAD_GRAYSCALE))
+    img = preprocess_image_fn(image)
+    # Expand dims to form a batch of 1
+    img_batch = np.expand_dims(img, axis=0)
+    # Predict
+    predictions = model.predict(img_batch)
+    predicted_index = np.argmax(predictions)
+    if debug:
+        print("Raw prediction probabilities:", predictions)
+        print("Predicted index:", predicted_index)
+    return predicted_index
 
 def base64_to_image(base64_str,size=256):
     """
@@ -163,11 +219,11 @@ def extract_image_feature(image, vocabulary):
 # Load the vocabulary
 vocab_path = "..\\skribix_v2\\feature extraction\\vocabulary.npy"
 
-vocabulary = np.load(vocab_path)
+# vocabulary = np.load(vocab_path)
 
 knn_model_path = "..\\skribix_v2\\knn model\\knn_model.joblib"
 # Load the Knn model
-knn_model = joblib.load(knn_model_path)
+# knn_model = joblib.load(knn_model_path)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -198,15 +254,21 @@ def predict():
         # return jsonify({'predictions': results})
         prediction = knn_model.predict([feature_vector])
         print(prediction)
+        
+        predicted_idx = predict_single_image(sample_image, ann_model_path, debug=True)
+        predicted_label = final_labels.get(predicted_idx, predicted_idx)
+        print("Final predicted label for the test image:", predicted_label)
+
 
         # return jsonify({'prediction': prediction.tolist()})
-        return jsonify({'prediction': int(prediction[0])})
+        # return jsonify({'prediction': int(prediction[0])})
+        return jsonify({'prediction': predicted_label})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7001)
+    app.run(debug=True, port=8080)
 
 #to run : 
 #py .\api.py
