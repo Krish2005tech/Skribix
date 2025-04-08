@@ -214,10 +214,11 @@ def predict():
         # results = predictions.tolist()
 
         # return jsonify({'predictions': results})
+        # Scale the feature vector if needed
         # scaler= StandardScaler()
-        # # Scale the feature vector if needed
         # feature_vector = scaler.fit_transform([feature_vector])[0]
-        # print("Feature vector shape:", feature_vector)
+        feature_vector=np.multiply(feature_vector, 1000)    
+        print("Feature vector shape:", feature_vector)
         prediction = knn_model.predict([feature_vector])
         print(prediction)
 
