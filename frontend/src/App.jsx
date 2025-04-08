@@ -3,7 +3,7 @@ import DrawingTool from './DrawingTool';
 export default function App() {
   return (
     <div className="app">
-      <h1>Mini Drawing Tool</h1>
+      <h1>Skribix</h1>
       <DrawingTool />
     </div>
   );

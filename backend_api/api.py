@@ -179,11 +179,11 @@ def extract_image_feature(image, vocabulary):
 
 
 # Load the vocabulary
-vocab_path = "..\\skribix_v2\\feature extraction\\vocabulary.npy"
+vocab_path = "..\\skribix_v2\\feature_extraction_smooth\\vocabulary.npy"
 
 vocabulary = np.load(vocab_path)
 
-knn_model_path = "..\\skribix_v2\\knn model\\knn_model.joblib"
+knn_model_path = "..\\skribix_v2\\knn model\\knn_model_smooth.joblib"
 # Load the Knn model
 knn_model = joblib.load(knn_model_path)
 
@@ -217,7 +217,7 @@ def predict():
         # scaler= StandardScaler()
         # # Scale the feature vector if needed
         # feature_vector = scaler.fit_transform([feature_vector])[0]
-        print("Feature vector shape:", feature_vector)
+        # print("Feature vector shape:", feature_vector)
         prediction = knn_model.predict([feature_vector])
         print(prediction)
 
