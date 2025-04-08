@@ -86,7 +86,7 @@ def preprocessing_function(img):
 # Test Image Prediction
 # ----------------------------
 
-def predict_single_image(image, model, debug=True):
+def predict_single_image(image, model_path, debug=True):
     """
     Load and preprocess a single test image, predict its label using the trained model,
     and display debugging information.
@@ -94,6 +94,7 @@ def predict_single_image(image, model, debug=True):
     # Load image and preprocess
     # img = preprocess_image_fn(cv2.imread(image_path, cv2.IMREAD_GRAYSCALE))
     img = preprocess_image_fn(image)
+    model = tf.keras.models.load_model(model_path)
     # Expand dims to form a batch of 1
     img_batch = np.expand_dims(img, axis=0)
     # Predict
@@ -264,7 +265,7 @@ def predict():
         # input_data = np.expand_dims(preprocessed_image, axis=0)
 
         sample_image = base64_to_image(base64_data)
-        feature_vector = extract_image_feature(sample_image, vocabulary)
+        # feature_vector = extract_image_feature(sample_image, vocabulary)
 
         # predictions = model.predict(input_data)
         # results = predictions.tolist()
@@ -273,10 +274,10 @@ def predict():
         # Scale the feature vector if needed
         # scaler= StandardScaler()
         # feature_vector = scaler.fit_transform([feature_vector])[0]
-        feature_vector=np.multiply(feature_vector, 1000)    
-        print("Feature vector shape:", feature_vector)
-        prediction = knn_model.predict([feature_vector])
-        print(prediction)
+        # feature_vector=np.multiply(feature_vector, 1000)    
+        # print("Feature vector shape:", feature_vector)
+        # prediction = knn_model.predict([feature_vector])
+        # print(prediction)
         
         predicted_idx = predict_single_image(sample_image, ann_model_path, debug=True)
         predicted_label = final_labels.get(predicted_idx, predicted_idx)
@@ -291,7 +292,7 @@ def predict():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=8080)
+    app.run(debug=True, port=7001)
 
 #to run : 
 #py .\api.py
