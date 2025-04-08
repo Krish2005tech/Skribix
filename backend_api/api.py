@@ -26,6 +26,8 @@ import io
 import numpy as np
 import cv2
 from PIL import Image
+from scipy.spatial.distance import cdist
+from sklearn.preprocessing import StandardScaler
 
 
 
@@ -59,11 +61,11 @@ def base64_to_image(base64_str,size=256):
     image_bytes = base64.b64decode(base64_str)
     img = Image.open(io.BytesIO(image_bytes))
     # Display the image using OpenCV (for debugging purposes)
-    # cv2.imshow("Decoded Image", np.array(img))
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
     img = np.array(img.convert('L'))  # Convert to grayscale
     img_resized = cv2.resize(img, (size, size))
+    # cv2.imshow("Decoded Image", img_resized)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
     return img_resized.astype(np.float32)
 
 def compute_gradients(image):
@@ -150,13 +152,29 @@ def quantize_descriptors(descriptors, vocabulary):
         hist /= hist.sum()
     return hist
 
+def soft_quantize_descriptors(descriptors, vocabulary, sigma=0.3):
+    """
+    For each descriptor, compute Gaussian weighted contributions to each vocabulary center,
+    then sum up contributions into a histogram.
+    """
+    distances = cdist(descriptors, vocabulary, metric='euclidean')
+    # Compute weights using a Gaussian kernel
+    weights = np.exp(-distances*2 / (2 * sigma*2))
+    # Normalize weights for each descriptor
+    weights /= weights.sum(axis=1, keepdims=True)
+    # Sum contributions over all descriptors to obtain histogram
+    hist = weights.sum(axis=0)
+    if hist.sum() > 0:
+        hist /= hist.sum()
+    return hist
+
 def extract_image_feature(image, vocabulary):
     """
     For a given image, extract local descriptors and compute a global 500-D feature 
     vector by quantizing the descriptors with the visual vocabulary.
     """
     descriptors = extract_local_descriptors(image)
-    feature_vector = quantize_descriptors(descriptors, vocabulary)
+    feature_vector = soft_quantize_descriptors(descriptors, vocabulary)
     return feature_vector
 
 
@@ -196,6 +214,10 @@ def predict():
         # results = predictions.tolist()
 
         # return jsonify({'predictions': results})
+        # scaler= StandardScaler()
+        # # Scale the feature vector if needed
+        # feature_vector = scaler.fit_transform([feature_vector])[0]
+        print("Feature vector shape:", feature_vector)
         prediction = knn_model.predict([feature_vector])
         print(prediction)
 
