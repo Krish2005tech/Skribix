@@ -82,10 +82,12 @@ export default function DrawingTool() {
   
       const data = await response.json();
       console.log("Prediction result:", data);
+      alert(data.prediction);
       // Optionally: alert(data.prediction); or set to state
     } catch (error) {
       console.error("Prediction error:", error);
     }
+  
   };
   
 
@@ -96,6 +98,15 @@ export default function DrawingTool() {
     link.href = canvas.toDataURL();
     link.click();
   };
+
+  const clearImage = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    setPaths([]);
+  }
 
   const handleMouseMove = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -127,6 +138,7 @@ export default function DrawingTool() {
             border: "5px solid black",
             background: "white",
             cursor: "none",
+            borderRadius: "20px",
           }}
           onMouseDown={(e) => {
             if (tool === "pencil") startDrawing(e);
@@ -182,6 +194,7 @@ export default function DrawingTool() {
         <button onClick={() => setTool("eraser")}>Eraser</button>
         <button onClick={saveImage}>Save as PNG</button>
         <button onClick={predictImage}>Predict</button>
+        <button onClick={clearImage}>Clear</button>
 
       </div>
     </div>
