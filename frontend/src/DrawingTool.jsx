@@ -72,7 +72,7 @@ export default function DrawingTool() {
   
     try {
       // const response = await fetch("https://your-api-endpoint.com/predict", {
-      const response = await fetch("http://localhost:7001/predict", {
+      const response = await fetch("http://34.131.175.227:7001/predict", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

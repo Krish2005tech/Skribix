@@ -1,0 +1,26 @@
+nohup: ignoring input
+2025-04-09 21:36:36.017112: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-09 21:36:36.022113: I external/local_xla/xla/tsl/cuda/cudart_stub.cc:32] Could not find cuda drivers on your machine, GPU will not be used.
+2025-04-09 21:36:36.036706: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2025-04-09 21:36:36.060890: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8454] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2025-04-09 21:36:36.067752: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1452] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-04-09 21:36:36.084794: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-04-09 21:36:37.294838: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+ * Serving Flask app 'api'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:7001
+ * Running on http://10.190.0.2:7001
+[33mPress CTRL+C to quit[0m
+220.158.144.58 - - [09/Apr/2025 21:36:58] "OPTIONS /predict HTTP/1.1" 200 -
+2025-04-09 21:36:59.861699: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 9437184 exceeds 10% of free system memory.
+2025-04-09 21:36:59.909561: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 9437184 exceeds 10% of free system memory.
+2025-04-09 21:36:59.921502: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 9437184 exceeds 10% of free system memory.
+2025-04-09 21:37:00.134581: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 9437184 exceeds 10% of free system memory.
+2025-04-09 21:37:00.190791: W external/local_tsl/tsl/framework/cpu_allocator_impl.cc:83] Allocation of 9437184 exceeds 10% of free system memory.
+WARNING:absl:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+[1m1/1[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 1s/step[1m1/1[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m1s[0m 1s/step
+220.158.144.58 - - [09/Apr/2025 21:37:02] "POST /predict HTTP/1.1" 200 -
+INFO:werkzeug:220.158.144.58 - - [09/Apr/2025 21:37:02] "POST /predict HTTP/1.1" 200 -

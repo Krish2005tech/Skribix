@@ -47,8 +47,8 @@ CORS(app)
 # ----------------------------
 # Step 1: Image Preprocessing and Local Descriptor Extraction
 
-ann_model_path = "..\\skribix_v2\\ann model\\best_ann_model_4.h5"
-
+#ann_model_path = "../skribix_v2/ann model/best_ann_model_4.h5"
+ann_model_path=os.path.join('..', 'skribix_v2', 'ann model', 'best_ann_model_4.h5')
 # ----------------------------
 # Preprocessing Function
 # ----------------------------
@@ -292,7 +292,7 @@ def predict():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=7001)
+    app.run(host="0.0.0.0", port=7001)
 
 #to run : 
 #py .\api.py
