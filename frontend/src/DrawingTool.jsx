@@ -216,7 +216,7 @@ export default function DrawingTool() {
                 display: mousePos.x === 0 && mousePos.y === 0 ? 'none' : 'block'
               }}
             >
-              {tool === "pencil" && <span className="pencil-cursor">✏️</span>}
+              {tool === "pencil" && <span className="pencil-cursor">⊹</span>}
               {tool === "eraser" && !erasing && (
                 <div className="eraser-cursor-idle" />
               )}
@@ -231,7 +231,7 @@ export default function DrawingTool() {
         </div>
 
         <div className="prediction-container">
-          <h2 className="prediction-title">AI Prediction</h2>
+          <h2 className="prediction-title">Model Prediction</h2>
           <div className="prediction-content">
             {isLoading ? (
               <div className="loading-indicator">

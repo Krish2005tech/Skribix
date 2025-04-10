@@ -1,14 +1,15 @@
 import DrawingTool from './DrawingTool';
 import './index.css';
 
-document.title = 'Skribix - AI Sketch Recognition Tool';
+document.title = 'sKRIBIX';
 
 export default function App() {
   return (
     <div className="app-container">
       <header className="app-header">
         <h1 className="app-title">
-          <span className="logo-text">Skribix</span>
+          {/* <span className="logo-text">Skribix</span> */}
+          <span className="logo-text"><img src=".\public\skribixlogo.png" alt="Skribix" /></span>
           <span className="tagline">Hand-drawn Sketch Recognition Tool</span>
         </h1>
       </header>

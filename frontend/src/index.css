@@ -95,6 +95,10 @@ body {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.logo-text img{
+  max-height: 10vh;
+}
+
 .tagline {
   font-size: 18px;
   font-weight: 400;
