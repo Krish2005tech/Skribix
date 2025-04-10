@@ -47,7 +47,8 @@ CORS(app)
 # ----------------------------
 # Step 1: Image Preprocessing and Local Descriptor Extraction
 
-ann_model_path = "..\\skribix_v2\\ann model\\best_ann_model_4.h5"
+# ann_model_path = "..\\skribix_v2\\ann model\\best_ann_model_4.h5"
+ann_model_path = os.path.join("..", "skribix_v2", "ann model", "best_ann_model_4.h5")
 
 # ----------------------------
 # Preprocessing Function
