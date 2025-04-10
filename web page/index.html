@@ -95,15 +95,18 @@
             position: relative;
             width: 24px;
             height: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         
         .nav-icon span {
-            position: absolute;
             height: 3px;
             width: 100%;
             background-color: white;
             border-radius: 3px;
             transition: all 0.3s ease;
+            margin: 2px 0; /* Adds spacing between spans */
         }
         
         .nav-icon span:nth-child(1) {
@@ -340,7 +343,9 @@
 <body>
     <header>
         <div class="logo">
-            <img src="skribixlogo.png" alt="Skribix Logo" style="width: 300px; height: auto;">
+            <a href="http://34.131.175.227/">
+                <img src="skribixlogo.png" alt="Skribix Logo" style="width: 300px; height: auto;">
+            </a></a>
         </div>
         <div class="subtitle">Handdrawn Sketch Recognition</div>
     </header>
