@@ -35,7 +35,26 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             position: relative;
         }
+        section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
         
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%; /* Ensures images are responsive */
+            height: auto; /* Maintains aspect ratio */
+        }
         .logo {
             font-size: 3rem;
             font-weight: bold;
@@ -341,8 +360,9 @@
             <li><a href="#introduction">Introduction</a></li>
             <li><a href="#dataset">Dataset Collection</a></li>
             <li><a href="#features">Feature Extraction</a></li>
-            <li><a href="#methodologies">Methodologies</a></li>
             <li><a href="#versions">Project Versions</a></li>
+            <li><a href="#methodologies">Methodologies</a></li>
+            <li><a href="#key-findings">Key Findings</a></li>
         </ul>
     </div>
     
@@ -397,109 +417,63 @@
         
         <section id="features">
             <h2>Feature Extraction</h2>
-            
+        
             <div class="feature-box">
-                <h3>1. Image Preprocessing & Local Descriptor Extraction</h3>
-                <h4>1.1 Preprocessing</h4>
-                <p><strong>Objective:</strong> Convert images into a uniform format suitable for feature extraction.</p>
+                <h3>1. S-HOG Features (Version 1)</h3>
+                <p><strong>Description:</strong> Sketch-specific Histogram of Oriented Gradients designed specifically for sketch recognition. It captures stroke patterns and orientations in sketched objects.</p>
                 <p><strong>Process:</strong></p>
                 <ul class="process-list">
-                    <li>Convert each image to grayscale.</li>
-                    <li>Resize all images to a fixed size (256×256) to standardize the descriptor grid.</li>
-                </ul>
-                
-                <h4>1.2 Gradient Computation</h4>
-                <p><strong>Objective:</strong> Extract edge information that is invariant to small changes in shape or appearance.</p>
-                <p><strong>Process:</strong></p>
-                <ul class="process-list">
-                    <li>Apply Sobel filters to compute horizontal (grad_x) and vertical (grad_y) gradients.</li>
-                    <li>Calculate the gradient magnitude and orientation for each pixel.</li>
-                    <li>Map orientations to the range [0,π) for unsigned angles.</li>
-                </ul>
-                
-                <h4>1.3 Local Descriptor Construction</h4>
-                <p><strong>Objective:</strong> Describe local texture and structure using gradient histograms.</p>
-                <p><strong>Process:</strong></p>
-                <ul class="process-list">
-                    <li>Divide image into patches using a fixed grid (e.g., 28×28 patches).</li>
-                    <li>For each patch:
-                        <ul>
-                            <li>Subdivide it into spatial bins (e.g., 4×4 grid).</li>
-                            <li>Compute a histogram of gradient orientations in each cell using magnitude as weight.</li>
-                            <li>Concatenate all histograms to form a 64-dimensional descriptor per patch.</li>
-                            <li>Normalize each descriptor to make it robust to illumination changes.</li>
-                        </ul>
-                    </li>
+                    <li>Compute gradients in horizontal and vertical directions.</li>
+                    <li>Calculate gradient magnitude and orientation.</li>
+                    <li>Divide the image into patches and compute histograms of gradient orientations for each patch.</li>
+                    <li>Normalize histograms to make them robust to illumination changes.</li>
                 </ul>
             </div>
-            
+        
             <div class="feature-box">
-                <h3>2. Visual Vocabulary Creation Using K-Means</h3>
-                <h4>2.1 Gathering Descriptors</h4>
-                <p><strong>Objective:</strong> Collect all local descriptors from the dataset to build a visual vocabulary.</p>
+                <h3>2. Hard Quantized Descriptors (Version 2.0)</h3>
+                <p><strong>Description:</strong> Each local descriptor is assigned to exactly one cluster center in the visual vocabulary.</p>
                 <p><strong>Process:</strong></p>
                 <ul class="process-list">
-                    <li>Iterate over all images in each class folder.</li>
-                    <li>Extract local descriptors from each image using the previous step.</li>
-                    <li>Store all descriptors together in a single array (for clustering).</li>
-                    <li>Store image paths and their corresponding class labels.</li>
-                </ul>
-                
-                <h4>2.2 Vocabulary Learning</h4>
-                <p><strong>Objective:</strong> Create a visual vocabulary (codebook) by clustering local descriptors.</p>
-                <p><strong>Process:</strong></p>
-                <ul class="process-list">
-                    <li>Apply K-Means clustering to all descriptors.</li>
-                    <li>Each cluster center represents a "visual word".</li>
-                    <li>The total number of clusters determines the vocabulary size.</li>
-                    <li>Save the vocabulary (vocabulary.npy) for use during feature encoding.</li>
-                </ul>
-            </div>
-            
-            <div class="feature-box">
-                <h3>3. Global Image Feature Extraction: Histogram of Visual Words</h3>
-                <h4>3.1 Descriptor Quantization</h4>
-                <p><strong>Objective:</strong> Convert each local descriptor into a visual word assignment.</p>
-                <p><strong>Process:</strong></p>
-                <ul class="process-list">
-                    <li>For each descriptor, compute Euclidean distance to all cluster centers (vocabulary).</li>
-                    <li>Assign it to the nearest cluster (visual word).</li>
+                    <li>Extract local descriptors from image patches.</li>
+                    <li>Use K-Means clustering to create a visual vocabulary.</li>
+                    <li>Assign each descriptor to the nearest cluster center.</li>
                     <li>Build a histogram of visual word occurrences for the image.</li>
-                    <li>Normalize the histogram to get a 500-dimensional global feature vector.</li>
-                </ul>
-                
-                <h4>3.2 Dataset-Wide Feature Extraction</h4>
-                <p><strong>Objective:</strong> Generate a BoVW histogram for every image in the dataset.</p>
-                <p><strong>Process:</strong></p>
-                <ul class="process-list">
-                    <li>For each image, repeat the descriptor extraction and quantization process.</li>
-                    <li>Store the global feature vector and its associated label.</li>
                 </ul>
             </div>
-            
+        
             <div class="feature-box">
-                <h3>4. Feature Storage and Visualization</h3>
-                <h4>4.1 Saving Features</h4>
-                <p><strong>Objective:</strong> Persist the computed features and labels for model training.</p>
+                <h3>3. Soft Quantized Descriptors (Version 2.1)</h3>
+                <p><strong>Description:</strong> Each descriptor contributes to multiple visual words based on its distance to cluster centers, providing smoother feature representation.</p>
                 <p><strong>Process:</strong></p>
                 <ul class="process-list">
-                    <li>Save features as a NumPy array (image_features.npy).</li>
-                    <li>Save corresponding labels (image_labels.npy).</li>
-                </ul>
-                
-                <h4>4.2 Visualizing Feature Vectors</h4>
-                <p><strong>Objective:</strong> Inspect feature vectors to understand representation quality.</p>
-                <p><strong>Process:</strong></p>
-                <ul class="process-list">
-                    <li>For each class, find the first image in that class.</li>
-                    <li>Extract and print its BoVW histogram.</li>
-                    <li>This gives insight into how different or similar feature vectors are across categories.</li>
+                    <li>Extract local descriptors from image patches.</li>
+                    <li>Use K-Means clustering to create a visual vocabulary.</li>
+                    <li>Assign each descriptor to multiple cluster centers with weights proportional to their distances.</li>
+                    <li>Build a weighted histogram of visual word occurrences for the image.</li>
                 </ul>
             </div>
-            
-            <div class="stats">
-                <h3>Results</h3>
-                <p>We obtained 940,800 descriptors from 1,200 images. The size of these images features is (1200,500). After clustering these descriptors, the Features and labels are stored in files - 'image_features.npy' and 'image_label.npy'</p>
+        
+            <div class="feature-box">
+                <h3>4. Edge Detection Features (Version 2.3)</h3>
+                <p><strong>Description:</strong> Extracts boundary information from sketches using advanced edge detection algorithms, focusing on structural information rather than texture.</p>
+                <p><strong>Process:</strong></p>
+                <ul class="process-list">
+                    <li>Apply Canny edge detection to extract edges.</li>
+                    <li>Convert the edge map into a feature vector.</li>
+                    <li>Captures stroke continuity and connectivity information.</li>
+                </ul>
+            </div>
+        
+            <div class="feature-box">
+                <h3>5. Image Data Generation (Version 2.4)</h3>
+                <p><strong>Description:</strong> Utilizes deep learning techniques to automatically extract hierarchical features.</p>
+                <p><strong>Process:</strong></p>
+                <ul class="process-list">
+                    <li>Perform data augmentation (e.g., rotation, scaling, translation).</li>
+                    <li>Use convolutional layers to extract features.</li>
+                    <li>Generate a high-dimensional feature space (e.g., 16,384 dimensions) capturing complex patterns.</li>
+                </ul>
             </div>
         </section>
         
@@ -540,21 +514,66 @@
             <p>This version works with the complete dataset of 250 categories and 20,000 sketch images.</p>
             <h4>Feature Extraction:</h4>
             <ul class="process-list">
-                <li>Features obtained from Sugiyama .mat file</li>
+                <li>Features obtained from premade .mat filetaken from cybertron.cg.tu</li>
                 <li>S-HOG Features (20000 × 500)</li>
             </ul>
             <h4>Classification Models:</h4>
-            <ul class="process-list">
-                <li><strong>PCA + Naive Bayes (without SK-Learn):</strong> 66.25% training accuracy, 55.00% testing accuracy</li>
-                <li><strong>PCA + Naive Bayes (With SK-Learn):</strong> 70.30% training accuracy, 45.00% testing accuracy</li>
-                <li><strong>PCA + KNN:</strong> 61.02% training accuracy, 41.23% testing accuracy</li>
-                <li><strong>K-Means + KNN:</strong> 52.06% training accuracy, 32.17% testing accuracy</li>
-                <li><strong>Mean Shift Clustering + KNN:</strong> 61.13% training accuracy, 41.03% testing accuracy</li>
-                <li><strong>SVM:</strong> 76.02% training accuracy, 51.68% testing accuracy</li>
-                <li><strong>Mean Shift Clustering + SVM:</strong> 70.56% training accuracy, 41.52% testing accuracy</li>
-                <li><strong>ANN:</strong> 77.01% training accuracy, 51.23% testing accuracy</li>
-                <li><strong>GMM + KNN:</strong> 74.00% training accuracy, 52.01% testing accuracy</li>
-            </ul>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes (without SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">66.25%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">55.00%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes (With SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">70.30%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">45.00%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.02%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.23%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">K-Means + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">52.06%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">32.17%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Mean Shift Clustering + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.13%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.03%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">76.02%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.68%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Mean Shift Clustering + SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">70.56%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.52%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">ANN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">77.01%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.23%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">74.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">52.01%</td>
+                    </tr>
+                </tbody>
+            </table>
             </div>
             
             <div class="version-card">
@@ -566,13 +585,42 @@
                 <li>Hard Histogram Features (1200 × 500)</li>
             </ul>
             <h4>Classification Models:</h4>
-            <ul class="process-list">
-                <li><strong>PCA + Naive Bayes:</strong> 92.40% training accuracy, 58.75% testing accuracy</li>
-                <li><strong>Kmeans (k=40) + SVM (SK-Learn):</strong> 100.00% training accuracy, 78.75% testing accuracy</li>
-                <li><strong>Kmeans (k=10) + SVM (without SK-Learn):</strong> 100.00% training accuracy, 75.56% testing accuracy</li>
-                <li><strong>PCA + KNN (k=3):</strong> 73.33% training accuracy, 51.67% testing accuracy</li>
-                <li><strong>GMM + KNN:</strong> 100.00% training accuracy, 65.00% testing accuracy</li>
-            </ul>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">92.40%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">58.75%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=40) + SVM (SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">78.75%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=10) + SVM (without SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">75.56%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN (k=3)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.33%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.67%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">65.00%</td>
+                    </tr>
+                </tbody>
+            </table>
             </div>
             
             <div class="version-card">
@@ -584,13 +632,42 @@
                 <li>Soft Histogram Features (1200 × 500)</li>
             </ul>
             <h4>Classification Models:</h4>
-            <ul class="process-list">
-                <li><strong>PCA + Naive Bayes:</strong> 84.69% training accuracy, 64.17% testing accuracy</li>
-                <li><strong>Kmeans (k=45) + SVM (SK-Learn):</strong> 100.00% training accuracy, 81.25% testing accuracy</li>
-                <li><strong>Kmeans (k=10) + SVM (without SK-Learn):</strong> 100.00% training accuracy, 78.06% testing accuracy</li>
-                <li><strong>PCA + KNN (k=3):</strong> 73.33% training accuracy, 51.67% testing accuracy</li>
-                <li><strong>GMM + KNN:</strong> 84.20% training accuracy, 61.05% testing accuracy</li>
-            </ul>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.69%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">64.17%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=45) + SVM (SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">81.25%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=10) + SVM (without SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">78.06%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN (k=3)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.33%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.67%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.20%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.05%</td>
+                    </tr>
+                </tbody>
+            </table>
             </div>
             
             <div class="version-card">
@@ -602,11 +679,32 @@
                 <li>Edge Detection Feature (1200 × 800)</li>
             </ul>
             <h4>Classification Models:</h4>
-            <ul class="process-list">
-                <li><strong>ANN:</strong> 100.00% training accuracy, 80.03% testing accuracy</li>
-                <li><strong>SVM:</strong> 100.00% training accuracy, 81.60% testing accuracy</li>
-                <li><strong>K-Means + SVM:</strong> 100.00% training accuracy, 84.16% testing accuracy</li>
-            </ul>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">ANN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">80.03%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">81.60%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">K-Means + SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.16%</td>
+                    </tr>
+                </tbody>
+            </table>
             </div>
             
             <div class="version-card">
@@ -618,44 +716,37 @@
                 <li>Image Data Generation (1200 × 16384)</li>
             </ul>
             <h4>Classification Models:</h4>
-            <ul class="process-list">
-                <li><strong>CNN:</strong> 94.65% training accuracy, 73.67% testing accuracy</li>
-                <li><strong>SVM:</strong> 100.00% training accuracy, 56.25% testing accuracy</li>
-                <li><strong>PCA + SVM:</strong> 100.00% training accuracy, 46.25% testing accuracy</li>
-            </ul>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">CNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">94.65%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.67%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">56.25%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">46.25%</td>
+                    </tr>
+                </tbody>
+            </table>
             </div>
-            
-            <h3>Feature Extraction Techniques</h3>
-            <div class="feature-box">
-            <h4>1. S-HOG Features (Version 1)</h4>
-            <p>Sketch-specific Histogram of Oriented Gradients designed specifically for sketch recognition, which captures stroke patterns and orientations in sketched objects.</p>
-            </div>
-            
-            <div class="feature-box">
-            <h4>2. Hard & Soft Quantized Descriptors (Versions 2.0 & 2.1)</h4>
-            <p><strong>Hard Quantization:</strong> Each descriptor is assigned to exactly one cluster center in the visual vocabulary.</p>
-            <p><strong>Soft Quantization:</strong> Each descriptor contributes to multiple visual words based on its distance to cluster centers, providing smoother feature representation.</p>
-            </div>
-            
-            <div class="feature-box">
-            <h4>3. Edge Detection Features (Version 2.3)</h4>
-            <p>Extracts boundary information from sketches using advanced edge detection algorithms, focusing on structural information rather than texture.</p>
-            <ul class="process-list">
-                <li>Applied Canny edge detection followed by feature vector creation</li>
-                <li>Captures stroke continuity and connectivity information</li>
-            </ul>
-            </div>
-            
-            <div class="feature-box">
-            <h4>4. Image Data Generation (Version 2.4)</h4>
-            <p>Utilizes deep learning techniques to automatically extract hierarchical features:</p>
-            <ul class="process-list">
-                <li>Data augmentation through rotation, scaling, and translation</li>
-                <li>Feature extraction using convolutional layers</li>
-                <li>Higher dimensional feature space (16384) capturing more complex patterns</li>
-            </ul>
-            </div>
-            
+        </section>
+
+        <section id="key-findings">
+            <h2>Key Findings and Real-time Application</h2>
             <h3>Key Findings</h3>
             <div class="stats">
             <h4>Performance Analysis</h4>
