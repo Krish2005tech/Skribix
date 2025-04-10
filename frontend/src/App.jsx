@@ -9,7 +9,7 @@ export default function App() {
       <header className="app-header">
         <h1 className="app-title">
           {/* <span className="logo-text">Skribix</span> */}
-          <span className="logo-text"><img src=".\public\skribixlogo.png" alt="Skribix" /></span>
+          <span className="logo-text"><img src="./skribixlogo.png" alt="Skribix" /></span>
           <span className="tagline">Hand-drawn Sketch Recognition Tool</span>
         </h1>
       </header>

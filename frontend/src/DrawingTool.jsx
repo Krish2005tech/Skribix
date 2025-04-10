@@ -11,6 +11,8 @@ export default function DrawingTool() {
   const [prediction, setPrediction] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const canvas_size = window.innerHeight *0.5;
+
   const startDrawing = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -189,8 +191,8 @@ export default function DrawingTool() {
           <div className="canvas-wrapper">
             <canvas
               ref={canvasRef}
-              width={500}
-              height={500}
+              width={canvas_size}
+              height={canvas_size}
               className="drawing-canvas"
               onMouseDown={(e) => {
                 if (tool === "pencil") startDrawing(e);

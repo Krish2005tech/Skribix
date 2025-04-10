@@ -8,6 +8,7 @@ body {
   align-items: center;
   min-height: 100vh;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .app h1 {
@@ -71,13 +72,14 @@ body {
   flex-direction: column;
   min-height: 100vh;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 0 ;
   padding: 20px;
+  padding-top: 0;
 }
 
 /* Header Styles */
 .app-header {
-  padding: 20px 0;
+  padding: 10px 0;
   text-align: center;
 }
 
@@ -96,7 +98,7 @@ body {
 }
 
 .logo-text img{
-  max-height: 10vh;
+  max-height: 9vh;
 }
 
 .tagline {
@@ -258,6 +260,7 @@ body {
 /* Prediction Container */
 .prediction-container {
   width: 300px;
+  max-height: fit-content;
   background: white;
   border-radius: 12px;
   padding: 20px;
@@ -359,7 +362,7 @@ body {
   text-align: center;
   color: #718096;
   font-size: 14px;
-  padding: 20px 0;
+  padding: 0;
 }
 
 /* Responsive Adjustments */
