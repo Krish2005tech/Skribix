@@ -50,3 +50,343 @@ body {
   font-size: 16px;
   cursor: pointer;
 }
+
+
+/* Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #f5f7fa;
+  color: #333;
+  min-height: 100vh;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header Styles */
+.app-header {
+  padding: 20px 0;
+  text-align: center;
+}
+
+.app-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo-text {
+  font-size: 48px;
+  font-weight: 700;
+  color: #4569d4;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tagline {
+  font-size: 18px;
+  font-weight: 400;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Drawing App Container */
+.drawing-app-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  margin-top: 20px;
+}
+
+/* Tool Panel */
+.tool-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.drawing-tools, .action-tools {
+  display: flex;
+  gap: 10px;
+}
+
+.tool-button, .action-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tool-button {
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+.tool-button.active {
+  background-color: #e6f7ff;
+  color: #0085ff;
+}
+
+.tool-button:hover {
+  background-color: #e6e6e6;
+}
+
+.action-button {
+  background-color: #4569d4;
+  color: white;
+}
+
+.action-button:hover {
+  background-color: #3a5bbb;
+}
+
+.action-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.clear-button {
+  background-color: #f56565;
+}
+
+.clear-button:hover {
+  background-color: #e53e3e;
+}
+
+.save-button {
+  background-color: #38a169;
+}
+
+.save-button:hover {
+  background-color: #2f855a;
+}
+
+.tool-icon, .button-icon {
+  font-size: 20px;
+}
+
+/* Main Content Area */
+.main-content {
+  display: flex;
+  gap: 30px;
+  flex: 1;
+}
+
+/* Canvas Container */
+.canvas-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.canvas-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.drawing-canvas {
+  border: 3px solid #4569d4;
+  background: white;
+  cursor: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.drawing-instructions {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+/* Custom Cursor */
+.custom-cursor {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.pencil-cursor {
+  font-size: 24px;
+  transform: translate(-50%, -50%);
+}
+
+.eraser-cursor-idle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #4569d4;
+  background-color: transparent;
+}
+
+.eraser-cursor-active {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(69, 105, 212, 0.3);
+}
+
+/* Prediction Container */
+.prediction-container {
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.prediction-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #4569d4;
+  margin-bottom: 20px;
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.prediction-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(69, 105, 212, 0.1);
+  border-radius: 50%;
+  border-top: 4px solid #4569d4;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.prediction-badge {
+  background-color: #ebf4ff;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.prediction-label {
+  display: block;
+  color: #4569d4;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.prediction-text {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+  text-transform: capitalize;
+}
+
+.prediction-hint {
+  font-size: 14px;
+  color: #718096;
+  line-height: 1.5;
+}
+
+.empty-prediction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.prompt-message {
+  color: #718096;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.example-icons {
+  display: flex;
+  gap: 12px;
+  font-size: 24px;
+}
+
+/* Footer */
+.app-footer {
+  margin-top: 40px;
+  text-align: center;
+  color: #718096;
+  font-size: 14px;
+  padding: 20px 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .main-content {
+    flex-direction: column;
+  }
+  
+  .prediction-container {
+    width: 100%;
+    margin-top: 20px;
+  }
+  
+  .canvas-container {
+    align-items: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .tool-panel {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .drawing-tools, .action-tools {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .drawing-canvas {
+    width: 100%;
+    height: auto;
+  }
+}

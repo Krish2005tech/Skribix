@@ -8,6 +8,8 @@ export default function DrawingTool() {
   const [currentPath, setCurrentPath] = useState([]);
   const [erasing, setErasing] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [prediction, setPrediction] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const startDrawing = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -40,7 +42,7 @@ export default function DrawingTool() {
 
     setPaths((prevPaths) => {
       const newPaths = prevPaths.filter(
-        (path) => !path.some((point) => Math.hypot(point.x - x, point.y - y) < 10)
+        (path) => !path.some((point) => Math.hypot(point.x - x, point.y - y) < 15)
       );
       redraw(newPaths);
       return newPaths;
@@ -53,8 +55,11 @@ export default function DrawingTool() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
     ctx.strokeStyle = "black";
+    
     for (const path of allPaths) {
       ctx.beginPath();
       for (let i = 0; i < path.length; i++) {
@@ -67,6 +72,12 @@ export default function DrawingTool() {
   };
 
   const predictImage = async () => {
+    if (paths.length === 0) {
+      alert("Please draw something first!");
+      return;
+    }
+
+    setIsLoading(true);
     const canvas = canvasRef.current;
     const imageBase64 = canvas.toDataURL("image/png");
   
@@ -82,19 +93,24 @@ export default function DrawingTool() {
   
       const data = await response.json();
       console.log("Prediction result:", data);
-      alert(data.prediction);
-      // Optionally: alert(data.prediction); or set to state
+      setPrediction(data.prediction);
     } catch (error) {
       console.error("Prediction error:", error);
+      setPrediction("Error: Could not analyze sketch");
+    } finally {
+      setIsLoading(false);
     }
-  
   };
   
-
   const saveImage = () => {
+    if (paths.length === 0) {
+      alert("Please draw something first!");
+      return;
+    }
+
     const canvas = canvasRef.current;
     const link = document.createElement("a");
-    link.download = "drawing.png";
+    link.download = "skribix-drawing.png";
     link.href = canvas.toDataURL();
     link.click();
   };
@@ -106,6 +122,7 @@ export default function DrawingTool() {
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     setPaths([]);
+    setPrediction(null);
   }
 
   const handleMouseMove = (e) => {
@@ -123,79 +140,126 @@ export default function DrawingTool() {
   }, []);
 
   return (
-    <div className="drawing-container">
-      <div
-        style={{
-          position: "relative",
-          display: "inline-block",
-        }}
-      >
-        <canvas
-          ref={canvasRef}
-          width={window.innerHeight * 0.7}
-          height={window.innerHeight * 0.7}
-          style={{
-            border: "5px solid black",
-            background: "white",
-            cursor: "none",
-            borderRadius: "20px",
-          }}
-          onMouseDown={(e) => {
-            if (tool === "pencil") startDrawing(e);
-            else if (tool === "eraser") setErasing(true);
-          }}
-          onMouseMove={handleMouseMove}
-          onMouseUp={() => {
-            if (tool === "pencil") endDrawing();
-            else if (tool === "eraser") setErasing(false);
-          }}
-        />
-
-        {/* Custom Cursor — positioned relative to the canvas */}
-        <div
-          style={{
-            position: "absolute",
-            left: mousePos.x,
-            top: mousePos.y,
-            transform: "translate(-50%, -50%)",
-            pointerEvents: "none",
-            zIndex: 10,
-          }}
-        >
-          {tool === "pencil" && <span style={{ fontSize: 20,
-            transform: "translate(-50%, -50%)" 
-           }}>✏️</span>}
-          {tool === "eraser" && !erasing && (
-            <div
-              style={{
-                width: 20,
-                height: 20,
-                borderRadius: "50%",
-                border: "2px solid black",
-                backgroundColor: "transparent",
-              }}
-            />
-          )}
-          {tool === "eraser" && erasing && (
-            <div
-              style={{
-                width: 16,
-                height: 16,
-                borderRadius: "50%",
-                backgroundColor: "gray",
-              }}
-            />
-          )}
+    <div className="drawing-app-container">
+      <div className="tool-panel">
+        <div className="drawing-tools">
+          <button 
+            className={`tool-button ${tool === "pencil" ? "active" : ""}`}
+            onClick={() => setTool("pencil")}
+          >
+            <span className="tool-icon">✏️</span>
+            <span className="tool-label">Pencil</span>
+          </button>
+          <button 
+            className={`tool-button ${tool === "eraser" ? "active" : ""}`}
+            onClick={() => setTool("eraser")}
+          >
+            <span className="tool-icon">🧽</span>
+            <span className="tool-label">Eraser</span>  
+          </button>
+        </div>
+        <div className="action-tools">
+          <button 
+            className="action-button save-button"
+            onClick={saveImage}
+          >
+            <span className="button-icon">💾</span>
+            <span className="button-label">Save</span>
+          </button>
+          <button 
+            className="action-button predict-button"
+            onClick={predictImage}
+            disabled={isLoading || paths.length === 0}
+          >
+            <span className="button-icon">🔍</span>
+            <span className="button-label">{isLoading ? "Analyzing..." : "Predict"}</span>
+          </button>
+          <button 
+            className="action-button clear-button"
+            onClick={clearImage}
+          >
+            <span className="button-icon">🗑️</span>
+            <span className="button-label">Clear</span>
+          </button>
         </div>
       </div>
 
-      <div className="tool-buttons" style={{ marginTop: 20 }}>
-        <button onClick={() => setTool("pencil")}>Pencil</button>
-        <button onClick={() => setTool("eraser")}>Eraser</button>
-        <button onClick={saveImage}>Save as PNG</button>
-        <button onClick={predictImage}>Predict</button>
-        <button onClick={clearImage}>Clear</button>
+      <div className="main-content">
+        <div className="canvas-container">
+          <div className="canvas-wrapper">
+            <canvas
+              ref={canvasRef}
+              width={500}
+              height={500}
+              className="drawing-canvas"
+              onMouseDown={(e) => {
+                if (tool === "pencil") startDrawing(e);
+                else if (tool === "eraser") setErasing(true);
+              }}
+              onMouseMove={handleMouseMove}
+              onMouseUp={() => {
+                if (tool === "pencil") endDrawing();
+                else if (tool === "eraser") setErasing(false);
+              }}
+              onMouseLeave={() => {
+                if (tool === "pencil") endDrawing();
+                else if (tool === "eraser") setErasing(false);
+              }}
+            />
 
+            {/* Custom Cursor */}
+            <div
+              className="custom-cursor"
+              style={{
+                left: mousePos.x,
+                top: mousePos.y,
+                display: mousePos.x === 0 && mousePos.y === 0 ? 'none' : 'block'
+              }}
+            >
+              {tool === "pencil" && <span className="pencil-cursor">✏️</span>}
+              {tool === "eraser" && !erasing && (
+                <div className="eraser-cursor-idle" />
+              )}
+              {tool === "eraser" && erasing && (
+                <div className="eraser-cursor-active" />
+              )}
+            </div>
+          </div>
+          <div className="drawing-instructions">
+            Draw any simple object or shape for recognition
+          </div>
+        </div>
+
+        <div className="prediction-container">
+          <h2 className="prediction-title">AI Prediction</h2>
+          <div className="prediction-content">
+            {isLoading ? (
+              <div className="loading-indicator">
+                <div className="spinner"></div>
+                <p>Analyzing your sketch...</p>
+              </div>
+            ) : prediction ? (
+              <div className="prediction-result">
+                <div className="prediction-badge">
+                  <span className="prediction-label">I see a:</span>
+                  <h3 className="prediction-text">{prediction}</h3>
+                </div>
+                <p className="prediction-hint">Draw something else or clear the canvas to try again!</p>
+              </div>
+            ) : (
+              <div className="empty-prediction">
+                <p className="prompt-message">Draw something and click "Predict" to see what the model recognizes!</p>
+                <div className="example-icons">
+                  <span>🚗</span>
+                  <span>🏠</span>
+                  <span>🌳</span>
+                  <span>✈️</span>
+                  <span>🐱</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
