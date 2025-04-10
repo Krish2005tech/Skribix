@@ -531,7 +531,169 @@
         <section id="methodologies">
             <h2>Methodology and Models</h2>
             <p>The project implements various machine learning models and techniques for sketch recognition. These methodologies are tailored for both versions of the project, with optimizations made based on the dataset size and classification complexity.</p>
-            <p class="highlight">See the detailed methodology documentation for specific model implementations and performance metrics.</p>
+            
+            <h3>Model Versions Overview</h3>
+            <p>Across our project versions, we've experimented with different feature extraction techniques and classification models to find the optimal approach for sketch recognition:</p>
+            
+            <div class="version-card">
+            <h3><span class="version-number">1</span> Version 1 (250 classes × 80 images)</h3>
+            <p>This version works with the complete dataset of 250 categories and 20,000 sketch images.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features obtained from Sugiyama .mat file</li>
+                <li>S-HOG Features (20000 × 500)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <ul class="process-list">
+                <li><strong>PCA + Naive Bayes (without SK-Learn):</strong> 66.25% training accuracy, 55.00% testing accuracy</li>
+                <li><strong>PCA + Naive Bayes (With SK-Learn):</strong> 70.30% training accuracy, 45.00% testing accuracy</li>
+                <li><strong>PCA + KNN:</strong> 61.02% training accuracy, 41.23% testing accuracy</li>
+                <li><strong>K-Means + KNN:</strong> 52.06% training accuracy, 32.17% testing accuracy</li>
+                <li><strong>Mean Shift Clustering + KNN:</strong> 61.13% training accuracy, 41.03% testing accuracy</li>
+                <li><strong>SVM:</strong> 76.02% training accuracy, 51.68% testing accuracy</li>
+                <li><strong>Mean Shift Clustering + SVM:</strong> 70.56% training accuracy, 41.52% testing accuracy</li>
+                <li><strong>ANN:</strong> 77.01% training accuracy, 51.23% testing accuracy</li>
+                <li><strong>GMM + KNN:</strong> 74.00% training accuracy, 52.01% testing accuracy</li>
+            </ul>
+            </div>
+            
+            <div class="version-card">
+            <h3><span class="version-number">2</span> Version 2.0 (15 classes × 80 images)</h3>
+            <p>In this version, we reduced complexity by focusing on 15 selected classes with 1,200 images total.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features manually obtained by Quantized Descriptors and Visual Vocabulary</li>
+                <li>Hard Histogram Features (1200 × 500)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <ul class="process-list">
+                <li><strong>PCA + Naive Bayes:</strong> 92.40% training accuracy, 58.75% testing accuracy</li>
+                <li><strong>Kmeans (k=40) + SVM (SK-Learn):</strong> 100.00% training accuracy, 78.75% testing accuracy</li>
+                <li><strong>Kmeans (k=10) + SVM (without SK-Learn):</strong> 100.00% training accuracy, 75.56% testing accuracy</li>
+                <li><strong>PCA + KNN (k=3):</strong> 73.33% training accuracy, 51.67% testing accuracy</li>
+                <li><strong>GMM + KNN:</strong> 100.00% training accuracy, 65.00% testing accuracy</li>
+            </ul>
+            </div>
+            
+            <div class="version-card">
+            <h3><span class="version-number">2.1</span> Version 2.1 (15 classes × 80 images)</h3>
+            <p>This iteration improves on Version 2.0 with refined feature extraction techniques.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features manually obtained by Soft Quantized Descriptors and Visual Vocabulary</li>
+                <li>Soft Histogram Features (1200 × 500)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <ul class="process-list">
+                <li><strong>PCA + Naive Bayes:</strong> 84.69% training accuracy, 64.17% testing accuracy</li>
+                <li><strong>Kmeans (k=45) + SVM (SK-Learn):</strong> 100.00% training accuracy, 81.25% testing accuracy</li>
+                <li><strong>Kmeans (k=10) + SVM (without SK-Learn):</strong> 100.00% training accuracy, 78.06% testing accuracy</li>
+                <li><strong>PCA + KNN (k=3):</strong> 73.33% training accuracy, 51.67% testing accuracy</li>
+                <li><strong>GMM + KNN:</strong> 84.20% training accuracy, 61.05% testing accuracy</li>
+            </ul>
+            </div>
+            
+            <div class="version-card">
+            <h3><span class="version-number">2.3</span> Version 2.3 (15 classes × 80 images)</h3>
+            <p>This version explores edge detection as a feature extraction technique.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features manually obtained by Edge Detection</li>
+                <li>Edge Detection Feature (1200 × 800)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <ul class="process-list">
+                <li><strong>ANN:</strong> 100.00% training accuracy, 80.03% testing accuracy</li>
+                <li><strong>SVM:</strong> 100.00% training accuracy, 81.60% testing accuracy</li>
+                <li><strong>K-Means + SVM:</strong> 100.00% training accuracy, 84.16% testing accuracy</li>
+            </ul>
+            </div>
+            
+            <div class="version-card">
+            <h3><span class="version-number">2.4</span> Version 2.4 (15 classes × 80 images)</h3>
+            <p>Our most advanced version utilizing deep learning and image data generation.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features manually obtained by Image Data Generation</li>
+                <li>Image Data Generation (1200 × 16384)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <ul class="process-list">
+                <li><strong>CNN:</strong> 94.65% training accuracy, 73.67% testing accuracy</li>
+                <li><strong>SVM:</strong> 100.00% training accuracy, 56.25% testing accuracy</li>
+                <li><strong>PCA + SVM:</strong> 100.00% training accuracy, 46.25% testing accuracy</li>
+            </ul>
+            </div>
+            
+            <h3>Feature Extraction Techniques</h3>
+            <div class="feature-box">
+            <h4>1. S-HOG Features (Version 1)</h4>
+            <p>Sketch-specific Histogram of Oriented Gradients designed specifically for sketch recognition, which captures stroke patterns and orientations in sketched objects.</p>
+            </div>
+            
+            <div class="feature-box">
+            <h4>2. Hard & Soft Quantized Descriptors (Versions 2.0 & 2.1)</h4>
+            <p><strong>Hard Quantization:</strong> Each descriptor is assigned to exactly one cluster center in the visual vocabulary.</p>
+            <p><strong>Soft Quantization:</strong> Each descriptor contributes to multiple visual words based on its distance to cluster centers, providing smoother feature representation.</p>
+            </div>
+            
+            <div class="feature-box">
+            <h4>3. Edge Detection Features (Version 2.3)</h4>
+            <p>Extracts boundary information from sketches using advanced edge detection algorithms, focusing on structural information rather than texture.</p>
+            <ul class="process-list">
+                <li>Applied Canny edge detection followed by feature vector creation</li>
+                <li>Captures stroke continuity and connectivity information</li>
+            </ul>
+            </div>
+            
+            <div class="feature-box">
+            <h4>4. Image Data Generation (Version 2.4)</h4>
+            <p>Utilizes deep learning techniques to automatically extract hierarchical features:</p>
+            <ul class="process-list">
+                <li>Data augmentation through rotation, scaling, and translation</li>
+                <li>Feature extraction using convolutional layers</li>
+                <li>Higher dimensional feature space (16384) capturing more complex patterns</li>
+            </ul>
+            </div>
+            
+            <h3>Key Findings</h3>
+            <div class="stats">
+            <h4>Performance Analysis</h4>
+            <ul>
+                <li><strong>Best Overall Performance:</strong> Version 2.3's K-Means + SVM with 84.16% testing accuracy</li>
+                <li><strong>Most Balanced Model:</strong> Version 2.1's Kmeans (k=45) + SVM with 81.25% testing accuracy</li>
+                <li><strong>Most Promising Deep Learning Approach:</strong> Version 2.4's CNN with 73.67% testing accuracy, showing room for improvement with more data</li>
+            </ul>
+            
+            <h4>Observations</h4>
+            <ul>
+                <li>Reducing classes from 250 to 15 significantly improved recognition accuracy</li>
+                <li>Edge detection features (V2.3) produced surprisingly good results compared to more complex approaches</li>
+                <li>SVM consistently outperformed other classifiers when paired with appropriate feature extraction techniques</li>
+                <li>Deep learning approaches (CNN) show promise but require more data for optimal performance</li>
+            </ul>
+            </div>
+            
+            <h3>Real-time Application</h3>
+            <p>The Version 2.1 model has been implemented in a real-time sketch recognition application:</p>
+            <ul class="process-list">
+            <li>Users can draw sketches on a canvas interface</li>
+            <li>The sketch is processed using the same feature extraction pipeline</li>
+            <li>The optimized Kmeans + SVM model predicts the sketch class</li>
+            <li>Results are displayed to the user with confidence scores</li>
+            <li>Integration with Google Cloud storage enables efficient processing and deployment</li>
+            </ul>
+            
+            <div class="feature-box">
+            <h4>Future Improvements</h4>
+            <p>We're exploring several avenues to enhance our sketch recognition system:</p>
+            <ul class="process-list">
+                <li>Hybrid models combining CNN feature extraction with traditional classifiers</li>
+                <li>More sophisticated data augmentation to improve model generalization</li>
+                <li>Incremental learning capabilities to add new sketch categories over time</li>
+                <li>Time-sequence modeling to capture the drawing process information</li>
+            </ul>
+            </div>
         </section>
     </div>
     
