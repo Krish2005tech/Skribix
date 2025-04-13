@@ -127,7 +127,7 @@ export default function App() {
               GitHub
             </a>
             <a 
-              href="skribix-project-page.vercel.app" 
+              href="https://skribix-project-page.vercel.app/" 
               target="_blank" 
               rel="noopener noreferrer"
               className="footer-nav-link"
