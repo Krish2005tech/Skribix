@@ -45,7 +45,7 @@ export default function App() {
           <div className="about-container">
             <h2>About Skribix</h2>
             <p>Skribix is a machine learning powered sketch recognition tool that can identify hand-drawn sketches in real-time.</p>
-            <p>Draw any of the supported objects, and our AI model will try to identify what you've drawn.</p>
+            <p>Draw any of the supported objects, and our ML model will try to identify what you've drawn.</p>
             <h3>Supported Sketches</h3>
             <p className="click-instruction">Click on any class below to see a sample drawing</p>
             <div className="supported-sketches">
@@ -77,7 +77,7 @@ export default function App() {
               <h3>How to Use Skribix</h3>
               <ol>
                 <li>Use the pencil tool to draw a sketch on the canvas</li>
-                <li>Click the "Predict" button to have the AI identify your drawing</li>
+                <li>Click the "Predict" button to have the ML Model identify your drawing</li>
                 <li>Use the eraser tool to remove parts of your drawing</li>
                 <li>Click "Clear" to start over</li>
                 <li>Click "Save" to download your drawing as an image</li>
@@ -107,10 +107,16 @@ export default function App() {
               Home
             </button>
             <button 
+              className={`footer-nav-link ${activeTab === 'about' ? 'active' : ''}`}
+              onClick={() => setActiveTab('about')}
+            >
+              About
+            </button>
+            <button 
               className={`footer-nav-link ${activeTab === 'docs' ? 'active' : ''}`}
               onClick={() => setActiveTab('docs')}
             >
-              Documentation
+              How to Use
             </button>
             <a 
               href="https://github.com/Sahil-1918912/Skribix" 
@@ -120,12 +126,14 @@ export default function App() {
             >
               GitHub
             </a>
-            <button 
-              className={`footer-nav-link ${activeTab === 'about' ? 'active' : ''}`}
-              onClick={() => setActiveTab('about')}
+            <a 
+              href="skribix-project-page.vercel.app" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="footer-nav-link"
             >
-              About
-            </button>
+              Project Page
+            </a>
           </nav>
         </div>
       </footer>
