@@ -1,4 +1,6 @@
-<img src="skribixlogo.png" alt="Skribix Logo" width="250">
+<div align="center">
+    <img src="skribixlogo.png" alt="Skribix Logo" width="250">
+</div>
 
 <br/>
 
