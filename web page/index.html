@@ -763,31 +763,31 @@
             
             <h4>Observations</h4>
             <ul>
-                <li>Reducing classes from 250 to 15 significantly improved recognition accuracy</li>
-                <li>Edge detection features (V2.3) produced surprisingly good results compared to more complex approaches</li>
-                <li>SVM consistently outperformed other classifiers when paired with appropriate feature extraction techniques</li>
-                <li>Deep learning approaches (CNN) show promise but require more data for optimal performance</li>
+                <li>Reducing classes from 250 to 15 significantly improved the model trainings and recognition abilities of model.</li>
+                <li>Edge detection features (V2.3) produced surprisingly good results compared to other complex approaches.</li>
+                <li>SVM consistently outperformed other classifiers when paired with appropriate feature extraction and preprocessing techniques.</li>
+                <li>Deep learning approaches (CNN) showed promising results but require more data for optimal performance.</li>
             </ul>
             </div>
             
             <h3>Real-time Application</h3>
-            <p>The Version 2.1 model has been implemented in a real-time sketch recognition application:</p>
+            <p>The Version 2.4 model has been implemented in a real-time sketch recognition application:</p>
             <ul class="process-list">
             <li>Users can draw sketches on a canvas interface</li>
-            <li>The sketch is processed using the same feature extraction pipeline</li>
-            <li>The optimized Kmeans + SVM model predicts the sketch class</li>
-            <li>Results are displayed to the user with confidence scores</li>
+            <li>The sketch is processed using a feature extraction pipeline</li>
+            <li>The optimized CNN model predicts the sketch class</li>
+            <li>Results are displayed to the user</li>
             <li>Integration with Google Cloud storage enables efficient processing and deployment</li>
             </ul>
             
             <div class="feature-box">
             <h4>Future Improvements</h4>
-            <p>We're exploring several avenues to enhance our sketch recognition system:</p>
+            <p>The project can be enhanced with a few modifications:</p>
             <ul class="process-list">
-                <li>Hybrid models combining CNN feature extraction with traditional classifiers</li>
-                <li>More sophisticated data augmentation to improve model generalization</li>
-                <li>Incremental learning capabilities to add new sketch categories over time</li>
-                <li>Time-sequence modeling to capture the drawing process information</li>
+                <li>Hybrid models can be introduced combining CNN feature extraction with traditional classifiers</li>
+                <li>More sophisticated data augmentation techniques can be implemented to improve model generalization</li>
+                <li>Incremental learning capabilities can be added, to add new sketch categories over time</li>
+                <li>Dynamic dataset can be introduced to learn from the user test inputs for better predictions in the following runs. </li>
             </ul>
             </div>
         </section>
