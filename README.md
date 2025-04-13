@@ -1,5 +1,8 @@
-![Skribix Logo](skribixlogo.png)
+<img src="skribixlogo.png" alt="Skribix Logo" width="250">
 
+<br/>
+
+---
 
 Skribix focuses on hand-drawn sketch recognition. It leverages machine learning and deep learning techniques to classify sketches into various object categories. The project is designed to provide an easy-to-use interface for training and testing models on sketch datasets. </br>
 
