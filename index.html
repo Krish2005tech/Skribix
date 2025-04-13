@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skribix - Handdrawn Sketch Recognition</title>
+    <style>
+        :root {
+            --white: #ffffff;
+            --light-gray: #f5f5f5;
+            --red: #e63946;
+            --dark-red: #c1121f;
+            --black: #1d3557;
+            --light-black: #333333;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--white);
+            color: var(--black);
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--black);
+            color: var(--white);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        img {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%; /* Ensures images are responsive */
+            height: auto; /* Maintains aspect ratio */
+        }
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--red);
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        /* Navigation Icon */
+        .nav-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1001;
+            background-color: var(--red);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: background-color 0.3s;
+        }
+        
+        .nav-toggle:hover {
+            background-color: var(--dark-red);
+        }
+        
+        .nav-icon {
+            position: relative;
+            width: 24px;
+            height: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .nav-icon span {
+            height: 3px;
+            width: 100%;
+            background-color: white;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            margin: 2px 0; /* Adds spacing between spans */
+        }
+        
+        .nav-icon span:nth-child(1) {
+            top: 0;
+        }
+        
+        .nav-icon span:nth-child(2) {
+            top: 7px;
+        }
+        
+        .nav-icon span:nth-child(3) {
+            top: 14px;
+        }
+        
+        /* Active state for hamburger to X transition */
+        .nav-toggle.active .nav-icon span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 7px;
+        }
+        
+        .nav-toggle.active .nav-icon span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .nav-toggle.active .nav-icon span:nth-child(3) {
+            transform: rotate(-45deg);
+            top: 7px;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: var(--black);
+            padding-top: 80px;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+            overflow-y: auto;
+        }
+        
+        .sidebar.active {
+            right: 0;
+        }
+        
+        .sidebar ul {
+            list-style-type: none;
+        }
+        
+        .sidebar ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .sidebar ul li a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 1rem 2rem;
+            display: block;
+            transition: background-color 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .sidebar ul li a:hover {
+            background-color: var(--light-black);
+            border-left: 4px solid var(--red);
+        }
+        
+        /* Overlay for when sidebar is active */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        
+        section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: var(--red);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        h3 {
+            color: var(--dark-red);
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .process-list {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .process-list li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats {
+            background-color: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+        }
+        
+        .stats ul {
+            list-style-type: none;
+        }
+        
+        .stats li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .stats li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-box {
+            background-color: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            border-left: 4px solid var(--red);
+        }
+        
+        .highlight {
+            color: var(--red);
+            font-weight: 600;
+        }
+        
+        .version-card {
+            background-color: var(--white);
+            border: 1px solid var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .version-card h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .version-number {
+            background-color: var(--red);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        footer {
+            background-color: var(--black);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        
+        .footer-text {
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        /* Scroll-to-top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--red);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            z-index: 998;
+        }
+        
+        .scroll-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-top:hover {
+            background-color: var(--dark-red);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="http://34.131.175.227/">
+                <img src="skribixlogo.png" alt="Skribix Logo" style="width: 300px; height: auto;">
+            </a></a>
+        </div>
+        <div class="subtitle">Handdrawn Sketch Recognition</div>
+    </header>
+    
+    <!-- Navigation Toggle Button -->
+    <button class="nav-toggle" id="navToggle">
+        <div class="nav-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#dataset">Dataset Collection</a></li>
+            <li><a href="#features">Feature Extraction</a></li>
+            <li><a href="#versions">Project Versions</a></li>
+            <li><a href="#methodologies">Methodologies</a></li>
+            <li><a href="#key-findings">Key Findings</a></li>
+        </ul>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="container">
+        <section id="introduction">
+            <h2>Introduction</h2>
+            <p>Skribix is a project focused on handdrawn sketch recognition. The dataset used in this project includes sketches of objects from 250 distinct categories, selected based on day-to-day functionality criteria.</p>
+            <img src="header_image.jpg" alt="Header Image">
+        </section>
+        
+        <section id="dataset">
+            <h2>Dataset Collection</h2>
+            <p>The dataset is obtained from "How Do Humans Sketch Objects?". This dataset includes 20,000 sketches collected using crowd-sourcing platforms like Amazon Mechanical Turk (AMT).</p>
+            
+            <h3>Collection Process</h3>
+            <ol class="process-list">
+                <li><strong>Task Instructions:</strong> Participants were asked to sketch objects based on randomly assigned category names within a 30-minute time limit. They were instructed to draw outlines only, avoiding excessive context. Participants were not professionals.</li>
+                <li><strong>Tools Provided:</strong> Participants defined their sketches using a stroke-based sketching canvas with undo, redo, clear, and delete options.</li>
+                <li><strong>Quality Control:</strong> After collection, sketches were manually reviewed to remove incorrect or offensive entries while retaining poorly drawn but valid sketches.</li>
+            </ol>
+            
+            <div class="stats">
+                <h3>Crowd-Sourcing Details</h3>
+                <ul>
+                    <li><strong>Participants:</strong> 1,350 unique workers contributed sketches.</li>
+                    <li><strong>Time Investment:</strong> A total of 741 hours was spent drawing sketches.</li>
+                    <li><strong>Median drawing time per sketch:</strong> 86 seconds.</li>
+                    <li><strong>Median number of strokes per sketch:</strong> 13.</li>
+                    <li><strong>Drawing Pattern:</strong> Longer strokes were observed at the beginning of sketches, indicating a coarse-to-fine drawing strategy.</li>
+                </ul>
+            </div>
+            
+            <h3>Data Verification</h3>
+            <p>To ensure quality:</p>
+            <ul class="process-list">
+                <li>Sketches were visually inspected using an interactive tool developed by the same university.</li>
+                <li>About 6.3% of sketches were removed for being in the wrong category or not meeting requirements.</li>
+                <li>For uniformity, the dataset was truncated to contain exactly 80 sketches per category.</li>
+            </ul>
+            
+            <h3>Project Datasets</h3>
+            <p>We created two sets of datasets depending on our version of the project:</p>
+            <ul class="process-list">
+                <li>The first implementation includes all 250 categories, consisting of 20,000 images.</li>
+                <li>In the second implementation, we took a subset of 15 classes: Airplane, Book, Cup, Envelope, Fan, Fork, Hat, Key, Laptop, Leaf, Moon, Pizza, T-shirt, Traffic light, and Wineglass.</li>
+            </ul>
+            <img src="dataset_image.png" alt="Dataset Image">
+        </section>
+        
+        <section id="features">
+            <h2>Feature Extraction</h2>
+        
+            <div class="feature-box">
+                <h3>1. S-HOG Features (Version 1)</h3>
+                <p><strong>Description:</strong> Sketch-specific Histogram of Oriented Gradients designed specifically for sketch recognition. It captures stroke patterns and orientations in sketched objects.</p>
+                <p><strong>Process:</strong></p>
+                <ul class="process-list">
+                    <li>Compute gradients in horizontal and vertical directions.</li>
+                    <li>Calculate gradient magnitude and orientation.</li>
+                    <li>Divide the image into patches and compute histograms of gradient orientations for each patch.</li>
+                    <li>Normalize histograms to make them robust to illumination changes.</li>
+                </ul>
+            </div>
+        
+            <div class="feature-box">
+                <h3>2. Hard Quantized Descriptors (Version 2.0)</h3>
+                <p><strong>Description:</strong> Each local descriptor is assigned to exactly one cluster center in the visual vocabulary.</p>
+                <p><strong>Process:</strong></p>
+                <ul class="process-list">
+                    <li>Extract local descriptors from image patches.</li>
+                    <li>Use K-Means clustering to create a visual vocabulary.</li>
+                    <li>Assign each descriptor to the nearest cluster center.</li>
+                    <li>Build a histogram of visual word occurrences for the image.</li>
+                </ul>
+            </div>
+        
+            <div class="feature-box">
+                <h3>3. Soft Quantized Descriptors (Version 2.1)</h3>
+                <p><strong>Description:</strong> Each descriptor contributes to multiple visual words based on its distance to cluster centers, providing smoother feature representation.</p>
+                <p><strong>Process:</strong></p>
+                <ul class="process-list">
+                    <li>Extract local descriptors from image patches.</li>
+                    <li>Use K-Means clustering to create a visual vocabulary.</li>
+                    <li>Assign each descriptor to multiple cluster centers with weights proportional to their distances.</li>
+                    <li>Build a weighted histogram of visual word occurrences for the image.</li>
+                </ul>
+            </div>
+        
+            <div class="feature-box">
+                <h3>4. Edge Detection Features (Version 2.3)</h3>
+                <p><strong>Description:</strong> Extracts boundary information from sketches using advanced edge detection algorithms, focusing on structural information rather than texture.</p>
+                <p><strong>Process:</strong></p>
+                <ul class="process-list">
+                    <li>Apply Canny edge detection to extract edges.</li>
+                    <li>Convert the edge map into a feature vector.</li>
+                    <li>Captures stroke continuity and connectivity information.</li>
+                </ul>
+            </div>
+        
+            <div class="feature-box">
+                <h3>5. Image Data Generation (Version 2.4)</h3>
+                <p><strong>Description:</strong> Utilizes deep learning techniques to automatically extract hierarchical features.</p>
+                <p><strong>Process:</strong></p>
+                <ul class="process-list">
+                    <li>Perform data augmentation (e.g., rotation, scaling, translation).</li>
+                    <li>Use convolutional layers to extract features.</li>
+                    <li>Generate a high-dimensional feature space (e.g., 16,384 dimensions) capturing complex patterns.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section id="versions">
+            <h2>Project Versions</h2>
+            <p>We created two versions of this project to optimize our accuracy and build our functionalities accordingly.</p>
+            
+            <div class="version-card">
+                <h3><span class="version-number">1</span> Version 1</h3>
+                <ul class="process-list">
+                    <li>It consists of 250 classes consisting of 20,000 images</li>
+                    <li>The prediction of these algorithms is obtained through various techniques.</li>
+                    <li>We implemented these models with multiple approaches.</li>
+                </ul>
+            </div>
+            
+            <div class="version-card">
+                <h3><span class="version-number">2</span> Version 2</h3>
+                <ul class="process-list">
+                    <li>We reduced the number of classes to 15, consisting of 1,200 images.</li>
+                    <li>The extraction of features is done through the above process.</li>
+                    <li>Reducing the number of classes helps our model be more accurate. The model got confused by certain categories.</li>
+                    <li>We enabled real-time prediction using Google Cloud storage. After we draw on the given application, press on "predict". Following, we get the model's prediction.</li>
+                </ul>
+            </div>
+            <img src="version_2_image.png" alt="Version 2 Image">
+        </section>
+        
+        <section id="methodologies">
+            <h2>Methodology and Models</h2>
+            <p>The project implements various machine learning models and techniques for sketch recognition. These methodologies are tailored for both versions of the project, with optimizations made based on the dataset size and classification complexity.</p>
+            
+            <h3>Model Versions Overview</h3>
+            <p>Across our project versions, we've experimented with different feature extraction techniques and classification models to find the optimal approach for sketch recognition:</p>
+            
+            <div class="version-card">
+            <h3><span class="version-number">1</span> Version 1 (250 classes × 80 images)</h3>
+            <p>This version works with the complete dataset of 250 categories and 20,000 sketch images.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features obtained from premade .mat filetaken from cybertron.cg.tu</li>
+                <li>S-HOG Features (20000 × 500)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes (without SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">66.25%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">55.00%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes (With SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">70.30%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">45.00%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.02%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.23%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">K-Means + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">52.06%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">32.17%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Mean Shift Clustering + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.13%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.03%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">76.02%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.68%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Mean Shift Clustering + SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">70.56%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.52%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">ANN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">77.01%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.23%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">74.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">52.01%</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+            
+            <div class="version-card">
+            <h3><span class="version-number">2</span> Version 2.0 (15 classes × 80 images)</h3>
+            <p>In this version, we reduced complexity by focusing on 15 selected classes with 1,200 images total.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features manually obtained by Quantized Descriptors and Visual Vocabulary</li>
+                <li>Hard Histogram Features (1200 × 500)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">92.40%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">58.75%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=40) + SVM (SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">78.75%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=10) + SVM (without SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">75.56%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN (k=3)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.33%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.67%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">65.00%</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+            
+            <div class="version-card">
+            <h3><span class="version-number">2.1</span> Version 2.1 (15 classes × 80 images)</h3>
+            <p>This iteration improves on Version 2.0 with refined feature extraction techniques.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features manually obtained by Soft Quantized Descriptors and Visual Vocabulary</li>
+                <li>Soft Histogram Features (1200 × 500)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.69%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">64.17%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=45) + SVM (SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">81.25%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=10) + SVM (without SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">78.06%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN (k=3)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.33%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.67%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.20%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.05%</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+            
+            <div class="version-card">
+            <h3><span class="version-number">2.3</span> Version 2.3 (15 classes × 80 images)</h3>
+            <p>This version explores edge detection as a feature extraction technique.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features manually obtained by Edge Detection</li>
+                <li>Edge Detection Feature (1200 × 800)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">ANN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">80.03%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">81.60%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">K-Means + SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.16%</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+            
+            <div class="version-card">
+            <h3><span class="version-number">2.4</span> Version 2.4 (15 classes × 80 images)</h3>
+            <p>Our most advanced version utilizing deep learning and image data generation.</p>
+            <h4>Feature Extraction:</h4>
+            <ul class="process-list">
+                <li>Features manually obtained by Image Data Generation</li>
+                <li>Image Data Generation (1200 × 16384)</li>
+            </ul>
+            <h4>Classification Models:</h4>
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Model</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Training Accuracy</th>
+                        <th style="border-bottom: 2px solid #ddd; padding: 8px;">Testing Accuracy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">CNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">94.65%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.67%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">56.25%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">46.25%</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </section>
+
+        <section id="key-findings">
+            <h2>Key Findings and Real-time Application</h2>
+            <h3>Key Findings</h3>
+            <div class="stats">
+            <h4>Performance Analysis</h4>
+            <ul>
+                <li><strong>Best Overall Performance:</strong> Version 2.3's K-Means + SVM with 84.16% testing accuracy</li>
+                <li><strong>Most Balanced Model:</strong> Version 2.1's Kmeans (k=45) + SVM with 81.25% testing accuracy</li>
+                <li><strong>Most Promising Deep Learning Approach:</strong> Version 2.4's CNN with 73.67% testing accuracy, showing room for improvement with more data</li>
+            </ul>
+            
+            <h4>Observations</h4>
+            <ul>
+                <li>Reducing classes from 250 to 15 significantly improved recognition accuracy</li>
+                <li>Edge detection features (V2.3) produced surprisingly good results compared to more complex approaches</li>
+                <li>SVM consistently outperformed other classifiers when paired with appropriate feature extraction techniques</li>
+                <li>Deep learning approaches (CNN) show promise but require more data for optimal performance</li>
+            </ul>
+            </div>
+            
+            <h3>Real-time Application</h3>
+            <p>The Version 2.1 model has been implemented in a real-time sketch recognition application:</p>
+            <ul class="process-list">
+            <li>Users can draw sketches on a canvas interface</li>
+            <li>The sketch is processed using the same feature extraction pipeline</li>
+            <li>The optimized Kmeans + SVM model predicts the sketch class</li>
+            <li>Results are displayed to the user with confidence scores</li>
+            <li>Integration with Google Cloud storage enables efficient processing and deployment</li>
+            </ul>
+            
+            <div class="feature-box">
+            <h4>Future Improvements</h4>
+            <p>We're exploring several avenues to enhance our sketch recognition system:</p>
+            <ul class="process-list">
+                <li>Hybrid models combining CNN feature extraction with traditional classifiers</li>
+                <li>More sophisticated data augmentation to improve model generalization</li>
+                <li>Incremental learning capabilities to add new sketch categories over time</li>
+                <li>Time-sequence modeling to capture the drawing process information</li>
+            </ul>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Scroll to top button -->
+    <div class="scroll-top" id="scrollTop">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+    </div>
+    
+    <footer>
+        <div class="logo">Skribix</div>
+        <p class="footer-text">Handdrawn Sketch Recognition Project</p>
+    </footer>
+
+    <script>
+        // Navigation Toggle
+        const navToggle = document.getElementById('navToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const scrollTop = document.getElementById('scrollTop');
+        const navLinks = document.querySelectorAll('.sidebar ul li a');
+        
+        // Toggle sidebar function
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            navToggle.classList.toggle('active');
+        }
+        
+        // Event listeners
+        navToggle.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+        
+        // Close sidebar when a nav link is clicked
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                toggleSidebar();
+            });
+        });
+        
+        // Scroll to top button visibility
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('active');
+            } else {
+                scrollTop.classList.remove('active');
+            }
+        });
+        
+        // Scroll to top on button click
+        scrollTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
