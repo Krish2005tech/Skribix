@@ -11,7 +11,29 @@ export default function DrawingTool() {
   const [prediction, setPrediction] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const canvas_size = window.innerHeight *0.5;
+  const canvas_size = window.innerHeight * 0.5;
+
+  // Map of class labels to their corresponding emoji
+  const labelToEmoji = {
+    "Airplane": "✈️",
+    "Book": "📚",
+    "Cup": "☕",
+    "Envelope": "✉️",
+    "Fan": "🌀",
+    "Fork": "🍴",
+    "Hat": "👒",
+    "Key": "🔑",
+    "Laptop": "💻",
+    "Leaf": "🍃",
+    "Moon": "🌙",
+    "Pizza": "🍕",
+    "T-shirt": "👕",
+    "Traffic Light": "🚦",
+    "Wine Glass": "🍷"
+  };
+
+  // Sample emojis for the empty prediction state
+  const exampleEmojis = ["✈️", "📚", "☕", "✉️", "🌀", "🍴", "👒", "🔑"];
 
   const startDrawing = (e) => {
     const rect = canvasRef.current.getBoundingClientRect();
@@ -141,6 +163,12 @@ export default function DrawingTool() {
     redraw(paths);
   }, []);
 
+  // Get emoji for predicted label if available
+  const getPredictionEmoji = () => {
+    if (!prediction || prediction.startsWith("Error")) return "";
+    return labelToEmoji[prediction] || "";
+  };
+
   return (
     <div className="drawing-app-container">
       <div className="tool-panel">
@@ -244,7 +272,9 @@ export default function DrawingTool() {
               <div className="prediction-result">
                 <div className="prediction-badge">
                   <span className="prediction-label">I see a:</span>
-                  <h3 className="prediction-text">{prediction}</h3>
+                  <h3 className="prediction-text">
+                    {getPredictionEmoji()} {prediction}
+                  </h3>
                 </div>
                 <p className="prediction-hint">Draw something else or clear the canvas to try again!</p>
               </div>
@@ -252,11 +282,9 @@ export default function DrawingTool() {
               <div className="empty-prediction">
                 <p className="prompt-message">Draw something and click "Predict" to see what the model recognizes!</p>
                 <div className="example-icons">
-                  <span>🚗</span>
-                  <span>🏠</span>
-                  <span>🌳</span>
-                  <span>✈️</span>
-                  <span>🐱</span>
+                  {exampleEmojis.map((emoji, index) => (
+                    <span key={index}>{emoji}</span>
+                  ))}
                 </div>
               </div>
             )}

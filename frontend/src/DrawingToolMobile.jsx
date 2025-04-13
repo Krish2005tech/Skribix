@@ -14,6 +14,28 @@ export default function DrawingToolMobile() {
   // Make canvas size responsive to the device width
   const canvas_size = Math.min(window.innerWidth * 0.9, window.innerHeight * 0.4);
 
+  // Map of class labels to their corresponding emoji
+  const labelToEmoji = {
+    "Airplane": "✈️",
+    "Book": "📚",
+    "Cup": "☕",
+    "Envelope": "✉️",
+    "Fan": "🌀",
+    "Fork": "🍴",
+    "Hat": "👒",
+    "Key": "🔑",
+    "Laptop": "💻",
+    "Leaf": "🍃",
+    "Moon": "🌙",
+    "Pizza": "🍕",
+    "T-shirt": "👕",
+    "Traffic Light": "🚦",
+    "Wine Glass": "🍷"
+  };
+
+  // Sample emojis for the empty prediction state
+  const exampleEmojis = ["✈️", "📚", "☕", "🍴", "🔑"];
+
   const startDrawing = (e) => {
     e.preventDefault();
     const touch = e.touches[0];
@@ -144,6 +166,12 @@ export default function DrawingToolMobile() {
     redraw(paths);
   }, []);
 
+  // Get emoji for predicted label if available
+  const getPredictionEmoji = () => {
+    if (!prediction || prediction.startsWith("Error")) return "";
+    return labelToEmoji[prediction] || "";
+  };
+
   return (
     <div className="drawing-app-container-mobile">
       <div className="canvas-container-mobile">
@@ -225,16 +253,18 @@ export default function DrawingToolMobile() {
           ) : prediction ? (
             <div className="prediction-result-mobile">
               <div className="prediction-badge-mobile">
-                <h3 className="prediction-text-mobile">{prediction}</h3>
+                <h3 className="prediction-text-mobile">
+                  {getPredictionEmoji()} {prediction}
+                </h3>
               </div>
             </div>
           ) : (
             <div className="empty-prediction-mobile">
               <p className="prompt-message-mobile">Draw and tap 🔍</p>
               <div className="example-icons-mobile">
-                <span>🚗</span>
-                <span>🏠</span>
-                <span>🐱</span>
+                {exampleEmojis.map((emoji, index) => (
+                  <span key={index}>{emoji}</span>
+                ))}
               </div>
             </div>
           )}

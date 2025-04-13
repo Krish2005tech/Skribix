@@ -3,10 +3,11 @@ import DrawingTool from './DrawingTool';
 import DrawingToolMobile from './DrawingToolMobile';
 import './index.css';
 
-document.title = 'sKRIBIX';
+document.title = 'Skribix';
 
 export default function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [activeTab, setActiveTab] = useState('home');
 
   useEffect(() => {
     const handleResize = () => {
@@ -22,15 +23,99 @@ export default function App() {
       <header className="app-header">
         <h1 className="app-title">
           <span className="logo-text"><img src="./skribixlogo.png" alt="Skribix" /></span>
-          {/* <span className="tagline">{isMobile ? 'Sketch Recognition' : 'Hand-drawn Sketch Recognition Tool'}</span> */}
-          <span className="tagline">'Hand-drawn Sketch Recognition Tool'</span>
+          <span className="tagline">Hand-drawn Sketch Recognition Tool</span>
         </h1>
       </header>
+      
       <main>
-        {isMobile ? <DrawingToolMobile /> : <DrawingTool />}
+        {activeTab === 'home' && (
+          isMobile ? <DrawingToolMobile /> : <DrawingTool />
+        )}
+        
+        {activeTab === 'about' && (
+          <div className="about-container">
+            <h2>About Skribix</h2>
+            <p>Skribix is a machine learning powered sketch recognition tool that can identify hand-drawn sketches in real-time.</p>
+            <p>Draw any of the supported objects, and our AI model will try to identify what you've drawn.</p>
+            <h3>Supported Sketches</h3>
+            <div className="supported-sketches">
+              <div className="sketch-item"><span>✈️</span> Airplane</div>
+              <div className="sketch-item"><span>📚</span> Book</div>
+              <div className="sketch-item"><span>☕</span> Cup</div>
+              <div className="sketch-item"><span>✉️</span> Envelope</div>
+              <div className="sketch-item"><span>🌀</span> Fan</div>
+              <div className="sketch-item"><span>🍴</span> Fork</div>
+              <div className="sketch-item"><span>👒</span> Hat</div>
+              <div className="sketch-item"><span>🔑</span> Key</div>
+              <div className="sketch-item"><span>💻</span> Laptop</div>
+              <div className="sketch-item"><span>🍃</span> Leaf</div>
+              <div className="sketch-item"><span>🌙</span> Moon</div>
+              <div className="sketch-item"><span>🍕</span> Pizza</div>
+              <div className="sketch-item"><span>👕</span> T-shirt</div>
+              <div className="sketch-item"><span>🚦</span> Traffic Light</div>
+              <div className="sketch-item"><span>🍷</span> Wine Glass</div>
+            </div>
+          </div>
+        )}
+        
+        {activeTab === 'docs' && (
+          <div className="docs-container">
+            <h2>Documentation</h2>
+            <div className="doc-section">
+              <h3>How to Use Skribix</h3>
+              <ol>
+                <li>Use the pencil tool to draw a sketch on the canvas</li>
+                <li>Click the "Predict" button to have the AI identify your drawing</li>
+                <li>Use the eraser tool to remove parts of your drawing</li>
+                <li>Click "Clear" to start over</li>
+                <li>Click "Save" to download your drawing as an image</li>
+              </ol>
+            </div>
+            <div className="doc-section">
+              <h3>Tips for Better Recognition</h3>
+              <ul>
+                <li>Draw in the center of the canvas</li>
+                <li>Keep your drawings simple but distinctive</li>
+                <li>Try to complete the shape's outline</li>
+                <li>Draw only one object at a time</li>
+              </ul>
+            </div>
+          </div>
+        )}
       </main>
+      
       <footer className="app-footer">
-        <p>© 2025 Skribix - Draw and identify sketches with ML</p>
+        <div className="footer-content">
+          <p>© 2025 Skribix - Draw and identify sketches with ML</p>
+          <nav className="footer-nav">
+            <button 
+              className={`footer-nav-link ${activeTab === 'home' ? 'active' : ''}`}
+              onClick={() => setActiveTab('home')}
+            >
+              Home
+            </button>
+            <button 
+              className={`footer-nav-link ${activeTab === 'docs' ? 'active' : ''}`}
+              onClick={() => setActiveTab('docs')}
+            >
+              Documentation
+            </button>
+            <a 
+              href="https://github.com/Sahil-1918912/Skribix" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="footer-nav-link"
+            >
+              GitHub
+            </a>
+            <button 
+              className={`footer-nav-link ${activeTab === 'about' ? 'active' : ''}`}
+              onClick={() => setActiveTab('about')}
+            >
+              About
+            </button>
+          </nav>
+        </div>
       </footer>
     </div>
   );
