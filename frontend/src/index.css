@@ -260,7 +260,7 @@ body {
 /* Prediction Container */
 .prediction-container {
   width: 300px;
-  max-height: fit-content;
+  max-height: 50vh;
   background: white;
   border-radius: 12px;
   padding: 20px;
@@ -872,4 +872,57 @@ body {
 
 .about-container, .docs-container {
   animation: fadeInModal 0.3s ease-out;
+}
+
+
+
+/* Add these styles to your index.css file */
+
+/* Clickable emojis in prediction box */
+.clickable-emoji {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+.clickable-emoji:hover {
+  transform: scale(1.2);
+}
+
+.clickable-emoji-mobile {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+/* Sample hint text */
+.sample-hint {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.sample-hint-mobile {
+  font-size: 0.7rem;
+  color: #666;
+  margin-top: 3px;
+  text-align: center;
+}
+
+/* Style for clickable class items in About section */
+.sketch-item.clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.sketch-item.clickable:hover {
+  background-color: #f0f0f0;
+}
+
+.click-instruction {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+  font-style: italic;
 }
