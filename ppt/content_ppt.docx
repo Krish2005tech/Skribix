@@ -1,0 +1,230 @@
+Slide 1 – Introduction and Dataset Collection
+Skribix – Handdrawn Sketch Recognition
+
+Introduction
+Skribix is a project focused on recognizing handdrawn sketches of everyday objects. It is designed around minimalist, outline-based drawings—often produced by non-professional users—where detail, color, and texture are absent. The aim is to build a recognition system capable of generalizing across different drawing styles and complexities while remaining lightweight and suitable for web deployment. The project emphasizes accuracy, class balance, and adaptability across real-world input variance.
+
+Dataset Source and Collection
+The dataset is derived from the study “How Do Humans Sketch Objects?” and contains 20,000 sketches across 250 object categories. Data was collected using Amazon Mechanical Turk (AMT), where 1,350 unique users were tasked with sketching objects from randomly assigned categories within a 30-minute session. Drawings were made on a browser-based canvas equipped with undo, redo, and clear functions.
+
+Sketch Characteristics and Quality Control
+
+Drawings were limited to outlines with no background context.
+
+Median drawing time: 86 seconds
+
+Median stroke count: 13
+
+Coarse-to-fine structure observed: longer strokes typically came first
+
+Around 6.3% of the data was removed due to irrelevance or offensiveness
+
+The dataset was trimmed to contain exactly 80 sketches per class for consistency
+
+Two dataset versions were used:
+
+Full set: 250 categories × 80 sketches = 20,000 total
+
+Reduced set: 15 selected categories × 80 = 1,200 sketches
+
+
+
+Slide 2 – Feature Extraction (Part 1)
+Feature Extraction Overview
+Feature extraction transforms raw sketch images into numerical representations that can be fed into machine learning models. Multiple techniques were explored, ranging from classical gradient methods to deep learning-based representations.
+
+S-HOG (Sketch-specific Histogram of Oriented Gradients)
+This method is optimized for stroke-based sketches:
+
+Images are converted to grayscale and resized to 256×256
+
+Sobel filters calculate horizontal and vertical gradients
+
+Gradient magnitude and orientation are derived from pixel intensity changes
+
+Image is divided into patches (e.g., 28×28), and histograms of gradient orientations are computed for each patch
+
+Resulting vectors are normalized to remove illumination or stroke-weight biases
+
+Final feature vector per image: 500 dimensions
+
+S-HOG effectively captures line direction, curvature, and relative shape orientation in low-detail drawings.
+
+Hard Quantized Descriptors (BoVW with Hard Assignment)
+
+Local descriptors from sketch patches are extracted
+
+K-Means clustering is used to generate a visual vocabulary (typically 500 clusters)
+
+Each descriptor is assigned to its nearest cluster (visual word)
+
+A histogram is formed by counting the frequency of each visual word
+
+Result: a compact and interpretable feature vector representing the sketch’s structure
+
+Used in Version 2.0 with strong performance
+
+
+
+Slide 3 – Feature Extraction (Part 2)
+Soft Quantized Descriptors (BoVW with Soft Assignment)
+This method enhances feature richness by distributing each descriptor across multiple clusters:
+
+Orientation magnitudes are assigned to multiple bins using Gaussian weighting based on proximity
+
+Prevents hard binning errors due to sketch noise or small stroke variations
+
+Yields a smoother, more descriptive histogram
+
+Resulting features (1200 × 500) are more robust to drawing inconsistencies
+
+Used in Version 2.1, improving generalization
+
+Edge Detection-Based Features (Version 2.2)
+
+Sketches undergo edge detection using Canny filters
+
+Edge maps focus on structural information like boundaries and stroke connectivity
+
+Each edge map is divided into spatial patches to extract directional features and pixel-level edge statistics
+
+Final edge feature vector has 8100 dimensions
+
+This method isolates contours cleanly and avoids reliance on internal details or stroke density
+
+Deep Features via CNNs (Version 2.3)
+
+Preprocessed and augmented images are passed through a pre-trained convolutional neural network (e.g., VGG16)
+
+CNN’s convolutional layers extract high-level abstract features related to stroke groupings, object contours, and composition
+
+The resulting deep feature vector per image has 16,384 dimensions
+
+Captures hierarchy and spatial dependencies in sketches
+
+Can be reused with classical ML models like SVM or KNN
+
+
+
+
+
+Slide 4 – Project Versions
+Version 1 – Full Dataset (250 classes)
+
+Used the complete 20,000-image dataset with 250 object categories
+
+Feature extraction via S-HOG
+
+Challenges included low inter-class separability, overlapping structures, and stylistic diversity
+
+Models showed moderate training accuracy but struggled to generalize well on unseen sketches
+
+Version 2 – Reduced Dataset (15 classes)
+
+Dataset was reduced to 1,200 sketches across 15 visually distinct categories
+
+Improved accuracy and minimized category confusion
+
+Feature extraction employed advanced methods including quantization, edge detection, and CNNs
+
+Enabled the creation of a real-time recognition system hosted via Google Cloud
+
+Users can sketch on a web interface and receive predictions instantly using the Version 2.1 model
+
+Web deployment accessible at: http://34.131.175.227/
+
+
+
+
+
+Slide 5 – Methodology and Models
+
+
+
+Version 1: Used the full 250-class dataset with traditional features and baseline models
+
+Version 2: Used a focused 15-class subset with advanced feature representations and optimized models
+
+Version 1 – Full Dataset (250 classes × 80 sketches)
+Feature: S-HOG (500-dimensional orientation-based descriptors)
+
+Model Approaches:
+
+PCA + Naive Bayes: PCA was applied to reduce dimensionality and remove redundancy. Naive Bayes assumed feature independence, offering a quick probabilistic baseline.
+
+Training: 70.30%, Testing: 45.00%
+
+SVM: Trained on the full feature space, SVM sought optimal decision boundaries. Despite strong training accuracy, test performance showed signs of overfitting.
+
+Training: 76.02%, Testing: 51.68%
+
+ANN: A shallow feedforward neural network captured non-linear relationships between features but was limited by sparse input and small layer depth.
+
+Training: 77.01%, Testing: 51.23%
+
+GMM + KNN: GMM grouped samples into soft clusters; KNN used those distributions to predict class based on neighboring samples.
+
+Training: 74.00%, Testing: 52.01%
+
+Takeaway: Version 1 revealed that 250-class classification from line drawings is a highly complex task, and classical models struggled with generalization due to feature similarity across categories.
+
+Version 2 – Reduced Dataset (15 classes × 80 sketches)
+This phase focused on improving classification performance by refining feature extraction and working with fewer but more distinct classes.
+
+Version 2.0 – Hard Quantized Features (BoVW with Hard Assignment)
+Feature: Local descriptors mapped to one visual word using K-Means clustering (vocab size = 500)
+
+Models:
+
+KMeans + SVM: Combined visual vocabulary with boundary-maximizing classification. Hard assignment produced clear-cut histograms.
+
+Training: 100.00%, Testing: 78.75%
+
+PCA + Naive Bayes: Offered interpretable results but slightly less accurate due to coarse feature assumptions.
+
+Training: 92.40%, Testing: 58.75%
+
+Version 2.1 – Soft Quantized Features
+Feature: Local descriptors softly assigned to multiple cluster centers using Gaussian weights
+
+Models:
+
+KMeans + SVM (k=45): Soft quantization generated smooth histograms that better captured stroke ambiguity. SVM used this nuanced input to separate class patterns more effectively.
+
+Training: 100.00%, Testing: 81.25%
+
+GMM + KNN: Probabilistic clustering helped model intra-class variance, and KNN classified sketches based on the likelihood of cluster membership.
+
+Training: 84.20%, Testing: 61.05%
+
+Key Insight: Soft quantization outperformed hard assignment by better handling drawing inconsistencies and stroke overlaps, particularly in ambiguous sketches.
+
+Version 2.2 – Edge Detection Features
+Feature: 8100-dimensional vectors from edge maps using Canny filters, capturing shape and structure
+
+Models:
+
+KMeans + SVM: Patches from edge maps were clustered and histograms were formed. The model learned to distinguish boundary patterns common to each class.
+
+Training: 100.00%, Testing: 84.16%
+
+ANN: Successfully captured stroke connectivity and region-based patterns from the high-dimensional feature space without feature compression.
+
+Training: 100.00%, Testing: 80.03%
+
+Remark: This technique achieved one of the best performances using handcrafted features alone, proving that clean structure is often enough for classification.
+
+Version 2.3 – Deep Features using CNNs
+Feature: 16,384-dimensional vectors extracted from intermediate layers of a pre-trained CNN (VGG16), using augmented input images
+
+Models:
+
+CNN (Fine-tuned Classifier Head): Convolutional layers acted as frozen feature extractors, and only the dense classification head was trained.
+
+Training: 94.65%, Testing: 73.67%
+
+SVM / PCA + SVM: CNN features were input into classical classifiers, but these models showed significant overfitting due to the high dimensionality and lack of tailored regularization.
+
+SVM Testing: 56.25%, PCA + SVM: 46.25%
+
+Conclusion: Deep features improved abstract understanding of sketches, but required more data or hybrid modeling to outperform handcrafted approaches fully.
