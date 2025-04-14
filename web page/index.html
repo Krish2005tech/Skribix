@@ -398,8 +398,8 @@
                 <ul>
                     <li><strong>Participants:</strong> 1,350 unique workers contributed sketches.</li>
                     <li><strong>Time Investment:</strong> A total of 741 hours was spent drawing sketches.</li>
-                    <li><strong>Median drawing time per sketch:</strong> 86 seconds.</li>
-                    <li><strong>Median number of strokes per sketch:</strong> 13.</li>
+                    <li><strong>Median drawing time per sketch:</strong> 86 seconds</li>
+                    <li><strong>Median number of strokes per sketch:</strong> 13</li>
                     <li><strong>Drawing Pattern:</strong> Longer strokes were observed at the beginning of sketches, indicating a coarse-to-fine drawing strategy.</li>
                 </ul>
             </div>
@@ -416,7 +416,27 @@
             <p>We created two sets of datasets depending on our version of the project:</p>
             <ul class="process-list">
                 <li>The first implementation includes all 250 categories, consisting of 20,000 images.</li>
-                <li>In the second implementation, we took a subset of 15 classes: Airplane, Book, Cup, Envelope, Fan, Fork, Hat, Key, Laptop, Leaf, Moon, Pizza, T-shirt, Traffic light, and Wineglass.</li>
+                <li>The second implementation includes 15 categories, consisting of 1200 images.<br/>
+                    The 15 categories:
+                </li>
+                
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; text-align: center;">
+                    <div>Airplane</div>
+                    <div>Book</div>
+                    <div>Cup</div>
+                    <div>Envelope</div>
+                    <div>Fan</div>
+                    <div>Fork</div>
+                    <div>Hat</div>
+                    <div>Key</div>
+                    <div>Laptop</div>
+                    <div>Leaf</div>
+                    <div>Moon</div>
+                    <div>Pizza</div>
+                    <div>T-shirt</div>
+                    <div>Traffic light</div>
+                    <div>Wineglass</div>
+                </div>
             </ul>
             <img src="dataset_image.png" alt="Dataset Image" style="max-width: 70%; height: auto; display: block; margin: 0 auto;">
         </section>
@@ -539,24 +559,9 @@
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">55.00%</td>
                     </tr>
                     <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes (With SK-Learn)</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">70.30%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">45.00%</td>
-                    </tr>
-                    <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.02%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.23%</td>
-                    </tr>
-                    <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">K-Means + KNN</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">52.06%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">32.17%</td>
-                    </tr>
-                    <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Mean Shift Clustering + KNN</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.13%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.03%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">74.00%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">52.01%</td>
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">SVM</td>
@@ -564,19 +569,34 @@
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.68%</td>
                     </tr>
                     <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Mean Shift Clustering + SVM</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">70.56%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.52%</td>
-                    </tr>
-                    <tr>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">ANN</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">77.01%</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.23%</td>
                     </tr>
                     <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">74.00%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">52.01%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes (With SK-Learn)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">70.30%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">45.00%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Mean Shift Clustering + SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">70.56%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.52%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.02%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.23%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">Mean Shift Clustering + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.13%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">41.03%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">K-Means + KNN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">52.06%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">32.17%</td>
                     </tr>
                 </tbody>
             </table>
@@ -601,29 +621,34 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">92.40%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">58.75%</td>
-                    </tr>
-                    <tr>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=40) + SVM (SK-Learn)</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">78.75%</td>
                     </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">ANN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">99.90%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">77.80%</td>
+                    </tr>>
                     <tr>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=10) + SVM (without SK-Learn)</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">75.56%</td>
                     </tr>
                     <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN (k=3)</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.33%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.67%</td>
-                    </tr>
-                    <tr>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">65.00%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">92.40%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">58.75%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN (k=3)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.33%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.67%</td>
                     </tr>
                 </tbody>
             </table>
@@ -648,14 +673,14 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.69%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">64.17%</td>
-                    </tr>
-                    <tr>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=45) + SVM (SK-Learn)</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">81.25%</td>
+                    </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">ANN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">99.27%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">80.00%</td>
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">Kmeans (k=10) + SVM (without SK-Learn)</td>
@@ -663,21 +688,26 @@
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">78.06%</td>
                     </tr>
                     <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN (k=3)</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.33%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.67%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + Naive Bayes</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.69%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">64.17%</td>
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">GMM + KNN</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.20%</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">61.05%</td>
                     </tr>
+                    <tr>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">PCA + KNN (k=3)</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">73.33%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">51.67%</td>
+                    </tr>
                 </tbody>
             </table>
             </div>
             
             <div class="version-card">
-            <h3><span class="version-number">2.3</span> Version 2.2 (15 classes × 80 images)</h3>
+            <h3><span class="version-number">2.2</span> Version 2.2 (15 classes × 80 images)</h3>
             <p>This version explores edge detection as a feature extraction technique.</p>
             <h4>Feature Extraction:</h4>
             <ul class="process-list">
@@ -695,9 +725,9 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">ANN</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">K-Means + SVM</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">80.03%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.16%</td>
                     </tr>
                     <tr>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">SVM</td>
@@ -705,16 +735,16 @@
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">81.60%</td>
                     </tr>
                     <tr>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">K-Means + SVM</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">ANN</td>
                         <td style="border-bottom: 1px solid #ddd; padding: 8px;">100.00%</td>
-                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">84.16%</td>
+                        <td style="border-bottom: 1px solid #ddd; padding: 8px;">80.03%</td>
                     </tr>
                 </tbody>
             </table>
             </div>
             
             <div class="version-card">
-            <h3><span class="version-number">2.4</span> Version 2.3 (15 classes × 80 images)</h3>
+            <h3><span class="version-number">2.3</span> Version 2.3 (15 classes × 80 images)</h3>
             <p>Our most advanced version utilizing deep learning and image data generation.</p>
             <h4>Feature Extraction:</h4>
             <ul class="process-list">
