@@ -31,7 +31,7 @@ export default function DrawingTool({ initialClass = null }) {
   const [sampleImage, setSampleImage] = useState(false);
   const [sampleImageClass, setSampleImageClass] = useState(null);
 
-  const canvas_size = window.innerHeight * 0.5;
+  const canvas_size = 400;
 
    // Sample images mapping
    const sampleImages = {

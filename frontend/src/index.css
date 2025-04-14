@@ -260,7 +260,7 @@ body {
 /* Prediction Container */
 .prediction-container {
   width: 300px;
-  max-height: 50vh;
+  max-height: 400px;
   background: white;
   border-radius: 12px;
   padding: 20px;
