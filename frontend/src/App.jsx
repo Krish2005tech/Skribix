@@ -12,7 +12,7 @@ export default function App() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 1200);
+      setIsMobile(window.innerWidth <= 1350);
     };
 
     window.addEventListener('resize', handleResize);
